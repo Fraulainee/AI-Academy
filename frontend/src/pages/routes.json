@@ -1,0 +1,12 @@
+{
+  "LandingFull.dc.html": "/",
+  "Landing.dc.html": "/intro",
+  "Main.dc.html": "/dashboard",
+  "CourseMap.dc.html": "/course-map",
+  "Lesson.dc.html": "/lesson",
+  "PromptWorkshop.dc.html": "/prompt-workshop",
+  "Capstone.dc.html": "/capstone",
+  "PracticeExam.dc.html": "/mock-exam",
+  "Certificates.dc.html": "/certification",
+  "Educator.dc.html": "/educator"
+}

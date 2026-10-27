@@ -1,0 +1,8 @@
+{
+  "name": "dc-to-react",
+  "private": true,
+  "type": "module",
+  "description": "One-time migration tool: converts the Claude Design (.dc.html) artboards in ../design-source into React page components in ../frontend/src/pages",
+  "scripts": { "convert": "node convert.mjs" },
+  "dependencies": { "htmlparser2": "^9.1.0", "prettier": "^3.3.3" }
+}

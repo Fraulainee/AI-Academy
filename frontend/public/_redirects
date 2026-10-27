@@ -1,0 +1,4 @@
+# Netlify / Cloudflare Pages: single-page-app fallback.
+# To keep the API same-origin when it lives elsewhere, add ABOVE the fallback (replace the host):
+#   /api/*  https://YOUR-API-HOST/api/:splat  200
+/*  /index.html  200

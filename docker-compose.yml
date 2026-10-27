@@ -1,0 +1,16 @@
+services:
+  academy:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "4000:4000"
+    environment:
+      # Required. Generate: node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"
+      JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET in a .env file next to this compose file}
+      EDUCATOR_EMAILS: ${EDUCATOR_EMAILS:-}
+      # Only if you serve the site over plain http (e.g. a LAN test box); keep "true" behind HTTPS.
+      COOKIE_SECURE: ${COOKIE_SECURE:-true}
+    volumes:
+      - academy-data:/data
+volumes:
+  academy-data:

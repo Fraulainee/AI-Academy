@@ -1,0 +1,119 @@
+{
+  "v": 3,
+  "createdOnFiles": {
+    "v": 1,
+    "at": "2026-10-14T08:47:00Z"
+  },
+  "title": "Supervaise × NVIDIA — GenAI & LLM Learning Studio",
+  "launch": {
+    "view": "focused",
+    "file": "Landing.dc.html"
+  },
+  "pages": [],
+  "boards": {
+    "Main.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 960,
+      "title": "Student · Overview",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "CourseMap.dc.html": {
+      "x": 1600,
+      "y": 0,
+      "w": 1440,
+      "h": 960,
+      "title": "Student · Course Map",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "Lesson.dc.html": {
+      "x": 3200,
+      "y": 0,
+      "w": 1440,
+      "h": 960,
+      "title": "Student · Lesson Workspace",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "Educator.dc.html": {
+      "x": 4800,
+      "y": 0,
+      "w": 1440,
+      "h": 960,
+      "title": "Educator · Faculty Console",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "Certificates.dc.html": {
+      "x": 6400,
+      "y": 0,
+      "w": 1440,
+      "h": 960,
+      "title": "Student · Achievements & Certification",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "PromptWorkshop.dc.html": {
+      "x": 1600,
+      "y": 1120,
+      "w": 1440,
+      "h": 960,
+      "title": "Student · Prompt Engineering Workshop",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "Capstone.dc.html": {
+      "x": 3200,
+      "y": 1120,
+      "w": 1440,
+      "h": 960,
+      "title": "Student · Capstone Project",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "PracticeExam.dc.html": {
+      "x": 6400,
+      "y": 1120,
+      "w": 1440,
+      "h": 960,
+      "title": "Student · Mock Exam Prep",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "Landing.dc.html": {
+      "x": 0,
+      "y": 1120,
+      "w": 1440,
+      "h": 960,
+      "title": "Entrance · AI Academy Landing",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "LandingFull.dc.html": {
+      "x": 0,
+      "y": 2240,
+      "w": 1440,
+      "h": 4000,
+      "title": "Entrance · AI Academy Landing (full, new)",
+      "expand": "fill",
+      "is_interactive": true
+    }
+  },
+  "order": [
+    "Landing.dc.html",
+    "LandingFull.dc.html",
+    "Main.dc.html",
+    "CourseMap.dc.html",
+    "Lesson.dc.html",
+    "Educator.dc.html",
+    "Certificates.dc.html",
+    "PromptWorkshop.dc.html",
+    "Capstone.dc.html",
+    "PracticeExam.dc.html"
+  ],
+  "notes": {},
+  "designSystems": []
+}

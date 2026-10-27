@@ -1,0 +1,674 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Capstone Project</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@500;600;700&amp;family=Source+Serif+4:wght@400;600;700;800&amp;display=swap">
+<style>
+  body{margin:0;font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);transition:background-color .3s ease,color .3s ease;line-height:1.7}
+  *{box-sizing:border-box}
+  a{color:var(--accent-strong);text-decoration:none}
+  a:hover{color:var(--accent-bright)}
+  button{font-family:inherit;cursor:pointer}
+  ::-webkit-scrollbar{width:8px;height:8px}
+  ::-webkit-scrollbar-thumb{background:var(--scrollbar);border-radius:4px}
+  .mono{font-family:'JetBrains Mono',monospace}
+  .sidebar{flex:0 0 240px;min-width:240px;border-right:1px solid rgba(255,255,255,0.08);background:linear-gradient(180deg,#0D1117,#0A0D12);padding:24px 16px;display:flex;flex-direction:column;gap:4px;box-shadow:inset -1px 0 0 rgba(118,185,0,0.06)}
+  .navlink{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;color:#9BA3AF;font-size:14px;font-weight:600;line-height:1.4;transition:background 200ms ease-out,color 200ms ease-out}
+  .navlink:hover{background:rgba(255,255,255,0.06);color:#FFFFFF}
+  .navlink.active{background:linear-gradient(90deg,rgba(118,185,0,0.18),rgba(118,185,0,0.03));color:#B6F23A;box-shadow:inset 2px 0 0 #8FD400}
+  .profilecard{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:10px;transition:border-color 200ms ease-out,background-color 200ms ease-out}
+  .profilecard:hover{border-color:rgba(118,185,0,0.35);background:rgba(255,255,255,0.06)}
+  .main{flex:999 1 560px;min-width:0;background:var(--bg);color:var(--text);padding:28px 48px 40px;transition:background-color .3s ease,color .3s ease}
+  .card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;box-shadow:var(--elev);transition:background-color .3s ease,border-color .3s ease,box-shadow .3s ease}
+  .badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;line-height:1.4;transition:background-color .3s ease,color .3s ease,border-color .3s ease}
+  @keyframes pulseDot{0%,100%{box-shadow:0 0 0 0 var(--accent-pulse)}50%{box-shadow:0 0 0 5px var(--accent-pulse-soft)}}
+  .pulsedot{animation:pulseDot 2.2s ease-in-out infinite}
+  .themepill{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:2px;padding:3px;border-radius:999px;background:var(--surface2);border:1px solid var(--surface2-border);transition:background-color .3s ease,border-color .3s ease}
+  .themepill:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .themeseg{display:inline-flex;align-items:center;gap:5px;padding:5px 11px;border-radius:999px;font-size:12px;font-weight:700;line-height:1.3;transition:background-color .3s ease,color .3s ease,box-shadow .3s ease}
+  .solidbtn{all:unset;cursor:pointer;display:inline-block;background:var(--accent-cta-bg);color:var(--accent-cta-text);font-weight:800;font-size:13px;line-height:1.4;padding:11px 20px;border-radius:9px;transition:background-color .3s ease,transform 150ms ease-out}
+  .solidbtn:hover{transform:translateY(-1px)}
+  .ghostbtn{all:unset;cursor:pointer;display:inline-block;text-align:center;background:var(--surface2);border:1px solid var(--surface2-border);color:var(--text);border-radius:9px;padding:10px 18px;font-size:13px;font-weight:700;line-height:1.4;transition:background-color .3s ease,border-color .3s ease}
+  .callout{background:var(--accent-soft-bg);border:1px solid var(--accent-soft-border);border-radius:10px;padding:14px 16px}
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--accent-soft-text);text-transform:uppercase}
+  @media (max-width:900px){.sidebar{flex:0 0 auto!important;width:100%!important;border-right:none!important;border-bottom:1px solid rgba(255,255,255,0.08)}.main{padding:24px 18px 32px!important}}
+/* motion:start */
+  @keyframes pageIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  @keyframes cardIn{from{opacity:0;transform:translateY(8px) scale(.995)}to{opacity:1;transform:none}}
+  .main > div > *:not(.card):not(.glass), div[style*="flex:999 1 560px"] > *:not(.card):not(.glass){animation:pageIn 520ms cubic-bezier(0.16,1,0.3,1) both}
+  .card, .glass{animation:cardIn 450ms cubic-bezier(0.16,1,0.3,1) both}
+  .main > div > *:nth-child(2), .main > div > *:nth-child(2) :is(.card,.glass), div[style*="flex:999 1 560px"] > *:nth-child(2), div[style*="flex:999 1 560px"] > *:nth-child(2) :is(.card,.glass){animation-delay:50ms}
+  .main > div > *:nth-child(3), .main > div > *:nth-child(3) :is(.card,.glass), div[style*="flex:999 1 560px"] > *:nth-child(3), div[style*="flex:999 1 560px"] > *:nth-child(3) :is(.card,.glass){animation-delay:100ms}
+  .main > div > *:nth-child(4), .main > div > *:nth-child(4) :is(.card,.glass), div[style*="flex:999 1 560px"] > *:nth-child(4), div[style*="flex:999 1 560px"] > *:nth-child(4) :is(.card,.glass){animation-delay:150ms}
+  .main > div > *:nth-child(5), .main > div > *:nth-child(5) :is(.card,.glass), div[style*="flex:999 1 560px"] > *:nth-child(5), div[style*="flex:999 1 560px"] > *:nth-child(5) :is(.card,.glass){animation-delay:200ms}
+  .main > div > *:nth-child(n+6), .main > div > *:nth-child(n+6) :is(.card,.glass), div[style*="flex:999 1 560px"] > *:nth-child(n+6), div[style*="flex:999 1 560px"] > *:nth-child(n+6) :is(.card,.glass){animation-delay:250ms}
+  .card{transition:background-color .35s ease,border-color .35s ease,color .35s ease,box-shadow .35s ease,transform 250ms cubic-bezier(0.16,1,0.3,1)}
+  .glass{transition:background-color .35s ease,border-color .35s ease,color .35s ease,box-shadow .35s ease,transform 250ms cubic-bezier(0.16,1,0.3,1)}
+  .badge{transition:background-color .35s ease,color .35s ease,border-color .35s ease,box-shadow .35s ease}
+  .sidebar{transition:border-color .35s ease,box-shadow .35s ease}
+  .main{transition:background-color .35s ease,color .35s ease}
+  .modcard{transition:transform 250ms cubic-bezier(0.16,1,0.3,1),box-shadow 250ms cubic-bezier(0.16,1,0.3,1),border-color 250ms ease,background-color .35s ease,color .35s ease}
+  .modcard:hover{transform:translateY(-2px)}
+  .chip{transition:transform 250ms cubic-bezier(0.16,1,0.3,1),border-color 250ms ease,background-color .35s ease,color .35s ease,box-shadow .35s ease}
+  .qrow{transition:transform 250ms cubic-bezier(0.16,1,0.3,1),background-color .25s ease,border-color .25s ease,color .25s ease}
+  .tplbtn{transition:transform 250ms cubic-bezier(0.16,1,0.3,1),background-color .25s ease,border-color .25s ease,color .25s ease}
+  .optline{transition:transform 250ms cubic-bezier(0.16,1,0.3,1),background-color .25s ease,border-color .25s ease,color .25s ease}
+  .exbtn{transition:transform 250ms cubic-bezier(0.16,1,0.3,1),background-color .3s ease,border-color .3s ease,color .3s ease}
+  .qrow:hover,.tplbtn:hover,.optline:hover,.exbtn:hover,.chip:hover{transform:translateY(-1px)}
+  .navlink{transition:background-color .25s ease,color .25s ease,transform 250ms cubic-bezier(0.16,1,0.3,1),box-shadow .25s ease}
+  .navlink:hover{transform:translateX(2px)}
+  .solidbtn{transition:background-color .3s ease,color .3s ease,box-shadow .3s ease,transform 180ms cubic-bezier(0.16,1,0.3,1)}
+  .ghostbtn{transition:background-color .3s ease,border-color .3s ease,color .3s ease,transform 180ms cubic-bezier(0.16,1,0.3,1)}
+  .chipbtn{transition:background-color .25s ease,color .25s ease,border-color .25s ease,transform 180ms cubic-bezier(0.16,1,0.3,1)}
+  .step{transition:background-color .3s ease,color .3s ease,transform 180ms cubic-bezier(0.16,1,0.3,1)}
+  .themepill{transition:background-color .3s ease,border-color .3s ease,transform 180ms cubic-bezier(0.16,1,0.3,1)}
+  .solidbtn:active,.ghostbtn:active,.chipbtn:active,.step:active,.themepill:active{transform:scale(.97)}
+  .barfill{transition:width .6s cubic-bezier(0.16,1,0.3,1)}
+  @media (prefers-reduced-motion: reduce){
+    .main > div > *, div[style*="flex:999 1 560px"] > *, .card, .glass{animation:none!important}
+    .modcard:hover,.chip:hover,.qrow:hover,.tplbtn:hover,.optline:hover,.exbtn:hover,.navlink:hover,.solidbtn:hover,.solidbtn:active,.ghostbtn:active,.chipbtn:active,.step:active,.themepill:active{transform:none!important}
+    .pulsedot{animation:none!important}
+  }
+/* motion:end */
+  .tplbtn{all:unset;cursor:pointer;display:block;width:100%;box-sizing:border-box;padding:11px 14px;border-radius:9px;font-size:13px;font-weight:700;line-height:1.4;margin-bottom:8px;color:var(--text);transition:background-color .2s ease,border-color .2s ease}
+  .bar{height:8px;border-radius:999px;background:var(--track);overflow:hidden}
+  .barfill{height:100%;border-radius:999px;transition:width .6s cubic-bezier(0.16,1,0.3,1)}
+  .logrow{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--divider)}
+  .logrow:last-child{border-bottom:none}
+  @media (max-width:1100px){.capgrid{grid-template-columns:1fr!important}}
+  /* sticky-sidebar */ .sidebar{position:sticky;top:0;height:100vh;overflow-y:auto;align-self:flex-start;scrollbar-width:none} .sidebar::-webkit-scrollbar{display:none} @media (max-width:900px){.sidebar{position:static!important;height:auto!important;overflow:visible!important}}
+  /* ---- shared academic chrome ---- */
+  .utilbar{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px 18px;margin-bottom:26px;padding-bottom:16px;border-bottom:1px solid var(--divider)}
+  .ctx{display:flex;flex-wrap:wrap;align-items:center;gap:9px;font-size:11.5px;color:var(--text3)}
+  .ctx-i{letter-spacing:.07em;text-transform:uppercase;font-weight:600}
+  .ctx-now{color:var(--text);font-weight:700}
+  .ctx-s{width:3px;height:3px;border-radius:999px;background:currentColor;opacity:.5;flex:none}
+  .hkbar{display:flex;align-items:center;gap:2px}
+  .hk{position:relative}
+  .hkbtn{all:unset;box-sizing:border-box;cursor:pointer;position:relative;display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:10px;color:var(--text3);transition:background-color .25s ease,color .25s ease}
+  .hkbtn:hover{background:var(--accent-soft-bg);color:var(--accent-soft-text)}
+  .hkbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .hk.is-open .hkbtn{background:var(--accent-soft-bg);color:var(--accent-soft-text)}
+  .hkbtn-icon{padding:0;width:40px;justify-content:center}
+  .hkic{width:17px;height:17px;flex:none;display:block}
+  .hkk{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;line-height:1;padding:3px 5px;border-radius:5px;background:var(--surface2);border:1px solid var(--surface2-border);color:var(--text3)}
+  .hkn{position:absolute;top:6px;right:5px;min-width:15px;height:15px;padding:0 4px;border-radius:999px;background:var(--accent);color:#07240B;box-shadow:0 0 0 2px var(--bg);font-size:9.5px;font-weight:700;line-height:1;display:inline-flex;align-items:center;justify-content:center}
+  .hkpop{position:absolute;top:calc(100% + 10px);right:0;z-index:60;width:320px;padding:15px 17px 13px;border-radius:14px;background:var(--card-bg);border:1px solid var(--divider);box-shadow:0 20px 48px rgba(0,0,0,0.28);opacity:0;visibility:hidden;transform:translateY(-7px);transition:opacity .3s ease,transform .38s cubic-bezier(0.16,1,0.3,1),visibility .3s}
+  .hk.is-open .hkpop{opacity:1;visibility:visible;transform:none}
+  .hkpop-h{font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);padding-bottom:9px;border-bottom:1px solid var(--divider);margin-bottom:11px}
+  .hkl{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:11px}
+  .hkl li{display:grid;grid-template-columns:58px 1fr;gap:10px;font-size:12.5px;line-height:1.45}
+  .hkt{color:var(--text3);font-weight:600;font-variant-numeric:tabular-nums}
+  .hkd{color:var(--text2)}
+  .hkd b{color:var(--text);font-weight:700;display:block}
+  .hkm{display:block;color:var(--text3);font-size:11.5px;margin-top:2px}
+  .hkpop-f{display:block;margin-top:13px;padding-top:11px;border-top:1px solid var(--divider);font-size:12px;font-weight:600;color:var(--accent-strong)}
+  .hkpop-f:hover{text-decoration:underline}
+  .setrow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 0;font-size:12.5px;border-bottom:1px solid var(--divider)}
+  .setrow:last-of-type{border-bottom:0}
+  .setlab{color:var(--text2);font-weight:600}
+  .setval{color:var(--text3);text-align:right}
+
+  /* ---- section grouping ---- */
+  .sect{margin-bottom:56px}
+  .sect-h{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:6px 16px;margin-bottom:20px}
+  .sect-t{font-family:var(--ff-read);font-size:var(--fs-h2);line-height:1.2;font-weight:700;letter-spacing:-.01em;color:var(--text);margin:0}
+  .sect-n{font-size:var(--fs-detail);color:var(--text2)}
+
+  /* ---- institutional footer ---- */
+  .sitefoot{margin-top:40px;padding-top:24px;border-top:1px solid var(--divider);font-size:12.5px;line-height:1.6}
+  .sf-top{display:flex;flex-wrap:wrap;justify-content:space-between;gap:26px 40px;padding-bottom:22px}
+  .sf-brand{display:flex;align-items:flex-start;gap:11px;max-width:290px}
+  .sf-brand svg{width:27px;height:23px;flex:none;display:block;margin-top:2px}
+  .sf-bt b{display:block;color:var(--text);font-size:13.5px;font-weight:800;letter-spacing:.01em}
+  .sf-bt span{display:block;color:var(--text3);font-size:12px;margin-top:2px}
+  .sf-cols{display:flex;flex-wrap:wrap;gap:26px 44px}
+  .sf-col{display:flex;flex-direction:column;gap:7px;min-width:132px}
+  .sf-col h4{margin:0 0 3px;font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)}
+  .sf-col a{color:var(--text2);transition:color .25s ease}
+  .sf-col a:hover{color:var(--accent-strong)}
+  .sf-bot{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px 20px;padding-top:16px;border-top:1px solid var(--divider);color:var(--text3);font-size:12px}
+  .sf-soc{display:flex;justify-content:center;align-items:center;gap:9px}
+  .sf-soc a{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;color:var(--text2);background:var(--surface2);border:1px solid var(--surface2-border);transition:color .3s ease,background-color .3s ease,border-color .3s ease,transform .4s cubic-bezier(0.16,1,0.3,1)}
+  .sf-soc a:hover{color:#07240B;background:var(--accent);border-color:var(--accent);transform:translateY(-2px)}
+  .sf-soc a:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+  .sf-soc svg{width:17px;height:17px;display:block}
+  .sf-power{justify-self:end;text-align:right}
+  .sf-power strong{color:var(--text2);font-weight:700}
+  .sf-power{display:inline-flex;align-items:center;justify-content:flex-end;gap:10px}
+  .sf-nv{height:34px;width:auto;flex:none}
+  .nvl-d{display:var(--nv-dark,block)}
+  .nvl-l{display:var(--nv-light,none)}
+  @media (max-width:820px){
+    .hklab,.hkk{display:none}
+    .hkbtn{padding:0;width:40px;justify-content:center}
+    .hkpop{width:min(320px,calc(100vw - 30px))}
+    .sf-bot{grid-template-columns:1fr;justify-items:center;text-align:center}
+    .sf-power{justify-self:center;text-align:center;justify-content:center}
+  }
+  /* ---- click-to-toggle header panels ---- */
+  .hk-scrim{position:fixed;inset:0;z-index:55;background:transparent;cursor:default}
+  .hk .hkbtn{position:relative;z-index:56}
+  /* ---- reading type system (shared with Lesson Workspace) ---- */
+  .cm{--ff-read:'Source Serif 4',Georgia,'Times New Roman',serif;--fs-title:clamp(34px,4.2vw,48px);--fs-lede:clamp(19px,1.6vw,22px);--fs-h2:clamp(24px,2vw,28px);--fs-h3:18.5px;--fs-body:16px;--fs-detail:15px;--fs-small:13px;--s1:8px;--s2:12px;--s3:16px;--s4:24px;--s5:40px;--measure:37rem;--wide:64rem;--marker:linear-gradient(transparent 60%,var(--accent-soft-bg) 0)}
+  @supports (color:color-mix(in srgb,red 50%,transparent)){.cm{--marker:linear-gradient(transparent 60%,color-mix(in srgb,var(--accent) 30%,transparent) 0)}}
+  .cm mark.mk{background:var(--marker);color:var(--text);padding:0 .12em;margin:0 -.04em;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+  .cm-w{width:100%;max-width:var(--wide);margin-inline:auto;min-width:0}
+  .cm-r{max-width:var(--measure)}
+  .cm-title{font-family:var(--ff-read);font-size:var(--fs-title);line-height:1.08;font-weight:800;letter-spacing:-.02em;margin:0 0 var(--s2);color:var(--text);overflow-wrap:break-word}
+  .cm-kicker{font-size:var(--fs-detail);color:var(--text2);margin:0 0 var(--s4)}
+  .cm-lede{font-family:var(--ff-read);font-size:var(--fs-lede);line-height:1.55;font-weight:400;color:var(--text);margin:0 0 var(--s3)}
+  .cm-det{font-size:var(--fs-detail);line-height:1.65;color:var(--text2);margin:0 0 var(--s4)}
+  .cm-fk{font-size:var(--fs-small);color:var(--text3);line-height:1.4}
+  .cm-fv{font-size:var(--fs-detail);color:var(--text);line-height:1.5;margin-top:2px}
+  .cm-h3{font-size:var(--fs-h3);font-weight:600;line-height:1.35;margin:0 0 var(--s2);color:var(--text)}
+  .cm-lab{font-size:var(--fs-detail);font-weight:500;color:var(--text2);margin:0 0 var(--s1)}
+  .cm-list{margin:0;padding-left:22px;font-size:var(--fs-body);line-height:1.65;color:var(--text)}
+  .cm-list li{margin-bottom:var(--s1);padding-left:4px}
+  .wk-t{font-family:var(--ff-read);font-size:clamp(24px,2.4vw,30px);line-height:1.2;font-weight:700;letter-spacing:-.01em;margin:0 0 6px;color:var(--text)}
+  .wk-sub{font-size:var(--fs-body);color:var(--text2);margin:0 0 20px}
+  .cm .pill,.cm .badge{font-size:12.5px;font-weight:500;letter-spacing:0;text-transform:none}
+  .cm .eyebrow{font-size:var(--fs-small);font-weight:500;letter-spacing:0;text-transform:none;color:var(--text2)}
+  .cm .ctx{font-size:13px;gap:8px}
+  .cm .ctx-i{letter-spacing:0;text-transform:none;font-weight:400}
+  .cm .ctx-now{font-weight:500}
+  .cm .hkd b{font-weight:500}
+  .cm .hkpop-h{font-size:12.5px;font-weight:500;letter-spacing:0;text-transform:none}
+  .cm .maptoggle{font-size:15px;font-weight:500}
+  .cm .setlab{font-weight:500}
+  .cm .solidbtn{font-weight:700;font-size:15px}
+  .cm .ghostbtn{font-weight:500;font-size:15px}
+  .cm .exbtn,.cm .chipbtn,.cm .tplbtn,.cm .qrow{font-weight:500}
+  .now{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+  @media (max-width:800px){.now{grid-template-columns:minmax(0,1fr)}}
+  .now-i{display:flex;flex-direction:column;gap:6px;padding:18px 20px;border-radius:12px;background:var(--card-bg);border:1px solid var(--card-border);text-decoration:none;color:var(--text)}
+  .now-i.first{border-color:var(--accent-soft-border);background:var(--accent-ghost-bg)}
+  .now-n{font-family:var(--ff-read);font-size:28px;line-height:1;font-weight:700;color:var(--accent-soft-text)}
+  .now-t{font-size:16px;font-weight:600;line-height:1.35}
+  .now-d{font-size:15px;line-height:1.55;color:var(--text2)}
+  .now-w{font-size:13px;font-weight:500;color:var(--text3)}
+  /* ---- capstone condensed ---- */
+  .cp-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:var(--s4)}
+  .chip-i{display:inline-flex;align-items:center;gap:7px;padding:6px 12px;border-radius:999px;background:var(--surface2);border:1px solid var(--surface2-border);font-size:var(--fs-small);color:var(--text2)}
+  .cp2{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);gap:16px;align-items:start}
+  .cp-prob{margin:0 0 var(--s3);font-size:var(--fs-body);line-height:1.55;color:var(--text)}
+  .flow{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+  .flow li{position:relative;display:flex;flex-direction:column;gap:8px;padding:12px;border-radius:12px;background:var(--surface2);border:1px solid var(--surface2-border)}
+  .flow li+li::before{content:"→";position:absolute;left:-14px;top:18px;color:var(--text3);font-size:15px;background:var(--bg);line-height:1;border-radius:999px}
+  .fl-n{width:28px;height:28px;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;background:var(--accent-soft-bg);color:var(--accent-soft-text);font-family:var(--ff-read);font-weight:700}
+  .fl-t{font-size:15px;font-weight:600;line-height:1.3;color:var(--text)}
+  .fl-t small{display:block;margin-top:2px;font-size:13px;font-weight:400;color:var(--text3)}
+  .cp-k{font-size:var(--fs-small);color:var(--text3)}
+  .cp-v{font-family:var(--ff-read);font-size:20px;font-weight:700;color:var(--text);margin-top:2px}
+  .cp-s{font-size:var(--fs-detail);color:var(--text2)}
+  .cp-note{margin:6px 0 0;font-size:var(--fs-detail);line-height:1.6;color:var(--text)}
+  .ms3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+  .mscard{display:flex;flex-direction:column;gap:6px;padding:20px 22px;border-radius:14px;background:var(--card-bg);border:1px solid var(--card-border);box-shadow:var(--elev)}
+  .ms-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+  .ms-wk{font-family:var(--ff-read);font-size:26px;font-weight:700;color:var(--accent-soft-text);line-height:1}
+  .ms-d{font-size:var(--fs-small);color:var(--text3)}
+  .ms-t{margin:6px 0 0;font-family:var(--ff-read);font-size:var(--fs-h3);font-weight:700;color:var(--text)}
+  .ms-w{margin:0;font-size:var(--fs-small);color:var(--text2)}
+  .ms-l{margin:8px 0 0;padding-left:1.15em;font-size:var(--fs-detail);line-height:1.55;color:var(--text)}
+  .ms-more{margin-top:8px;border-top:1px solid var(--divider);padding-top:8px}
+  .ms-more>summary{cursor:pointer;font-size:var(--fs-small);color:var(--accent-soft-text);list-style:none}
+  .ms-more>summary::-webkit-details-marker{display:none}
+  .ms-more>summary::before{content:"+ "}
+  .ms-more[open]>summary::before{content:"– "}
+  .ms-more ul{margin:8px 0 0;padding-left:1.15em;font-size:var(--fs-small);line-height:1.55;color:var(--text2)}
+  .ms-b{align-self:flex-start;margin-top:10px}
+  .rub{list-style:none;margin:0;padding:0}
+  .rub li{display:grid;grid-template-columns:12px minmax(0,1.1fr) 48px minmax(0,1.6fr);gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--divider);font-size:var(--fs-detail)}
+  .rub li:first-child{border-top:0}
+  .rub b{font-weight:600;color:var(--text)}
+  .rb-s{width:12px;height:12px;border-radius:3px}
+  .rb-w{font-family:'JetBrains Mono',monospace;color:var(--text)}
+  .rb-d{color:var(--text2)}
+  .lg-k{flex:0 0 100px;font-size:var(--fs-small);color:var(--text3)}
+  .lg-v{font-size:var(--fs-detail);color:var(--text);line-height:1.5}
+  @media (max-width:1000px){.ms3{grid-template-columns:minmax(0,1fr)}.cp2{grid-template-columns:minmax(0,1fr)}}
+  @media (max-width:700px){
+    .flow{grid-template-columns:minmax(0,1fr)}
+    .flow li+li::before{left:20px;top:-14px;content:"↓"}
+    .rub li{grid-template-columns:12px minmax(0,1fr) 44px}
+    .rb-d{grid-column:2 / -1}
+  }
+  /* ---- page frame (shared by every tab) ---- */
+  div.cm{max-width:calc(72rem + 96px)!important;margin-inline:auto!important;padding:32px 48px 64px!important;box-sizing:border-box}
+  .cm .cm-w{max-width:none!important;width:100%}
+  .cm .utilbar,.cm .utilrow{margin:0 0 24px!important;padding-bottom:16px!important}
+  .cm .sitefoot{margin-top:56px}
+  @media (max-width:900px){div.cm{padding:24px 20px 48px!important}}
+  /* ---- header panels pop above page content ---- */
+  .cm .utilbar,.cm .utilrow{position:relative;z-index:70}
+  .cm .hkpop{background:linear-gradient(var(--card-bg),var(--card-bg)),var(--bg);border:1px solid var(--accent-soft-border);box-shadow:0 0 0 1px var(--divider),0 28px 70px rgba(0,0,0,.38),0 8px 20px rgba(0,0,0,.18);transform:translateY(-8px) scale(.97);transform-origin:top right}
+  .cm .hk.is-open .hkpop{transform:none}
+  .cm .hkpop::before{content:"";position:absolute;top:-7px;right:16px;width:12px;height:12px;background:linear-gradient(135deg,var(--card-bg),var(--card-bg)),var(--bg);border-left:1px solid var(--accent-soft-border);border-top:1px solid var(--accent-soft-border);transform:rotate(45deg);border-radius:3px 0 0 0}
+  /* ---- hero header (shared) ---- */
+  .hx{--hc:118,185,0;--hc2:91,81,216;--hl:#B6F23A;position:relative;overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:32px;align-items:center;padding:40px 48px;border-radius:22px;margin-bottom:48px;max-width:none!important;color:#E5E7EB;border:1px solid rgba(var(--hc),.36);background:radial-gradient(70% 130% at 94% 0%,rgba(var(--hc),.40),transparent 60%),radial-gradient(50% 90% at 0% 100%,rgba(var(--hc2),.24),transparent 60%),linear-gradient(135deg,#0D1117,#12141C);box-shadow:0 18px 44px -20px rgba(var(--hc),.55)}
+  .hx::after{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(255,255,255,.035) 0 1px,transparent 1px 38px),repeating-linear-gradient(90deg,rgba(255,255,255,.035) 0 1px,transparent 1px 38px);-webkit-mask-image:linear-gradient(90deg,transparent,#000 75%);mask-image:linear-gradient(90deg,transparent,#000 75%)}
+  .hx>*{position:relative;z-index:1}
+  .hx-body{min-width:0}
+  .hx.hx-cyan{--hc:0,183,215;--hl:#67E8F9}
+  .hx.hx-violet{--hc:124,111,240;--hc2:118,185,0;--hl:#C4BEFF}
+  .hx.hx-amber{--hc:245,158,11;--hc2:239,68,68;--hl:#FFD27A}
+  .hx.hx-rose{--hc:232,90,160;--hc2:124,111,240;--hl:#FFB3D6}
+  .hx.hx-blue{--hc:59,130,246;--hc2:0,183,215;--hl:#A9CCFF}
+  .cm .hx .eyebrow{color:var(--hl);font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+  .cm .hx .cm-title,.cm .hx .lh-title{color:#FFFFFF;font-size:clamp(34px,4.2vw,50px)}
+  .cm .hx .cm-lede,.cm .hx .lh-purpose{color:#E5E7EB;max-width:38rem}
+  .cm .hx .cm-kicker{color:#D1D5DB}
+  .cm .hx mark.mk{color:#FFFFFF;background:linear-gradient(transparent 58%,rgba(var(--hc),.65) 0)}
+  .cm .hx .chip-i{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.18);color:#D1D5DB}
+  .cm .hx .ms{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.18)}
+  .cm .hx .ms b{color:var(--hl)}
+  .cm .hx .ms span{color:#D1D5DB}
+  .cm .hx .pw-ht{display:block}
+  .cm .hx .jbtn{margin-top:var(--s4);background:var(--hl);color:#0D1117;border-color:transparent;box-shadow:0 10px 26px rgba(var(--hc),.5)}
+  .cm .hx .pw-chips{margin-top:var(--s3)}
+  .cm .hx .disc>summary{color:#D1D5DB}
+  .cm .hx .disc>summary:hover{color:#FFFFFF}
+  .cm .hx .kv dt{color:#9CA3AF}
+  .cm .hx .kv dd{color:#E5E7EB}
+  .cm .hx .kv a,.cm .hx .kv a.cite{color:#FFFFFF;text-decoration-color:#9CA3AF}
+  .hx-ico{position:relative;width:132px;height:132px;border-radius:32px;display:flex;align-items:center;justify-content:center;color:#0D1117;background:linear-gradient(145deg,var(--hl),rgb(var(--hc)));box-shadow:0 18px 44px rgba(var(--hc),.55),inset 0 1px 0 rgba(255,255,255,.55);transform:rotate(-4deg)}
+  .hx-ico::before{content:"";position:absolute;inset:-14px;border-radius:44px;border:1.5px dashed rgba(var(--hc),.55)}
+  .hx-ico svg{width:62px;height:62px;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;fill:none}
+  @media (max-width:800px){.hx{grid-template-columns:minmax(0,1fr);padding:26px 22px;margin-bottom:36px}.hx-ico{display:none}}
+</style>
+</helmet>
+<div style="{{themeVars}}background:var(--bg);color:var(--text);transition:background-color .3s ease,color .3s ease;width:100%;min-height:100vh;display:flex;flex-wrap:wrap">
+
+  <div class="sidebar">
+    <div style="padding:8px 10px 22px">
+      <div style="font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#7C857A;line-height:1.3;margin-bottom:6px">Course</div>
+      <div style="font-size:15px;font-weight:800;color:#FFFFFF;line-height:1.3">GenAI &amp; LLMs with NVIDIA</div>
+      <div style="width:28px;height:3px;border-radius:999px;background:#76B900;margin-top:10px"></div>
+    </div>
+    <a class="navlink" href="Main.dc.html"><span>●</span><span>Overview</span></a>
+    <a class="navlink" href="CourseMap.dc.html"><span>◉</span><span>Course Map</span></a>
+    <a class="navlink" href="Lesson.dc.html"><span>◇</span><span>Lesson Workspace</span></a>
+    <a class="navlink" href="PromptWorkshop.dc.html"><span>✎</span><span>Prompt Workshop</span></a>
+    <a class="navlink active" href="Capstone.dc.html"><span>⚐</span><span>Capstone Project</span></a>
+    <a class="navlink" href="PracticeExam.dc.html"><span>⏱</span><span>Mock Exam Prep</span></a>
+    <a class="navlink" href="Certificates.dc.html"><span>▲</span><span>Certification Center</span></a>
+    <div style="flex:1"></div>
+    <div style="border-top:1px solid rgba(255,255,255,0.08);margin:12px 0 0;padding-top:12px">
+      <div class="profilecard" style="display:flex;align-items:flex-start;gap:10px;margin-bottom:6px">
+        <div style="flex:0 0 auto;width:34px;height:34px;border-radius:999px;background:linear-gradient(135deg,#76B900,#5B51D8);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#FFFFFF">MS</div>
+        <div style="min-width:0"><div style="font-size:13px;font-weight:700;color:#FFFFFF;line-height:1.3">Maya Santos</div><div style="font-size:11.5px;color:#9BA3AF;line-height:1.4">Student · Week 7 of 20</div></div>
+      </div>
+      <a class="navlink" href="Landing.dc.html" style="color:#7C857A"><span>⎋</span><span>Sign out</span></a>
+    </div>
+  </div>
+
+  <div class="main cm" style="">
+   <div class="cm-w">
+    <div class="utilbar">
+      <div class="ctx">
+        <span class="ctx-i">A.Y. 2026/2027</span>
+        <span class="ctx-s" aria-hidden="true"></span>
+        <span class="ctx-i">Second Semester</span>
+        <span class="ctx-s" aria-hidden="true"></span>
+        <span class="ctx-i ctx-now">Week 7 of 20</span>
+        <span class="ctx-s" aria-hidden="true"></span>
+        <span class="ctx-i">Midterm Term</span>
+      </div>
+      <div class="hkbar" role="toolbar" aria-label="Course tools" onKeyDown="{{hkKey}}"><div class="hk-scrim" style="display:{{hkScrim}}" onClick="{{hkClose}}"></div>
+        <div class="{{hkClsS}}">
+          <button type="button" class="hkbtn" aria-haspopup="true" aria-expanded="{{hkExS}}" onClick="{{hkTogS}}" aria-label="Schedule" title="Schedule (S)" aria-label="Upcoming requirements" title="Upcoming requirements (U)" aria-label="Alerts, 3 unread" title="Alerts"><svg class="hkic" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3.2" y="4.8" width="17.6" height="15.4" rx="2.6" stroke="currentColor" stroke-width="1.7"></rect><path d="M3.2 9.4h17.6M8.2 2.9v3.6M15.8 2.9v3.6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path></svg></button>
+          <div class="hkpop">
+            <div class="hkpop-h">Today · Wednesday, 14 October 2026</div>
+            <ul class="hkl">
+              <li><span class="hkt">08:00</span><span class="hkd"><b>Lecture 7.1: Attention mechanisms</b><span class="hkm">Room CS‑204 · Dr. J. A. Jose</span></span></li>
+              <li><span class="hkt">10:30</span><span class="hkd"><b>Laboratory 3: Scaled dot‑product attention</b><span class="hkm">Computing Laboratory 2 · Attendance required</span></span></li>
+              <li><span class="hkt">14:00</span><span class="hkd"><b>Consultation hours</b><span class="hkm">By appointment · Faculty Room 5</span></span></li>
+            </ul>
+            <a class="hkpop-f" href="CourseMap.dc.html">View the full course schedule</a>
+          </div>
+        </div>
+        <div class="{{hkClsU}}">
+          <button type="button" class="hkbtn" aria-haspopup="true" aria-expanded="{{hkExU}}" onClick="{{hkTogU}}"><svg class="hkic" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="8.8" stroke="currentColor" stroke-width="1.7"></circle><path d="M12 6.9V12l3.5 2.1" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
+          <div class="hkpop">
+            <div class="hkpop-h">Upcoming requirements</div>
+            <ul class="hkl">
+              <li><span class="hkt">17 Oct</span><span class="hkd"><b>Laboratory 3 report</b><span class="hkm">10% of final grade · Due 11:59 PM PHT</span></span></li>
+              <li><span class="hkt">24 Oct</span><span class="hkd"><b>Quiz 4: Transformer architecture</b><span class="hkm">5% of final grade · Two attempts permitted</span></span></li>
+              <li><span class="hkt">07 Nov</span><span class="hkd"><b>Midterm examination</b><span class="hkm">25% of final grade · Weeks 6 to 10 covered</span></span></li>
+            </ul>
+            <a class="hkpop-f" href="Certificates.dc.html">View all assessments and weights</a>
+          </div>
+        </div>
+        <div class="{{hkClsA}}">
+          <button type="button" class="hkbtn" aria-haspopup="true" aria-expanded="{{hkExA}}" onClick="{{hkTogA}}"><svg class="hkic" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M18.3 16.2V10.6a6.3 6.3 0 1 0-12.6 0v5.6l-1.6 2.3h15.8z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"></path><path d="M9.9 21.1h4.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path></svg><span class="hkn">3</span></button>
+          <div class="hkpop">
+            <div class="hkpop-h">Announcements</div>
+            <ul class="hkl">
+              <li><span class="hkt">Today</span><span class="hkd"><b>Laboratory 3 rubric published</b><span class="hkm">Posted by Dr. J. A. Jose</span></span></li>
+              <li><span class="hkt">13 Oct</span><span class="hkd"><b>Quiz 3 results released</b><span class="hkm">Class mean 82% · Review in consultation hours</span></span></li>
+              <li><span class="hkt">11 Oct</span><span class="hkd"><b>Reading added for Week 8</b><span class="hkm">Vaswani et al., sections 3.2 to 3.4</span></span></li>
+            </ul>
+            <a class="hkpop-f" href="#">View all announcements</a>
+          </div>
+        </div>
+        <div class="{{hkClsT}}">
+          <button type="button" class="hkbtn hkbtn-icon" aria-haspopup="true" aria-expanded="{{hkExT}}" onClick="{{hkTogT}}" aria-label="Settings" title="Settings"><svg class="hkic" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="3.1" stroke="currentColor" stroke-width="1.7"></circle><path d="M19.3 14.4a1.6 1.6 0 0 0 .3 1.8l.1.1a1.9 1.9 0 1 1-2.7 2.7l-.1-.1a1.6 1.6 0 0 0-2.7 1.1v.3a1.9 1.9 0 0 1-3.8 0v-.2a1.6 1.6 0 0 0-2.8-1.1l-.1.1a1.9 1.9 0 1 1-2.7-2.7l.1-.1a1.6 1.6 0 0 0-1.1-2.7h-.3a1.9 1.9 0 0 1 0-3.8h.2a1.6 1.6 0 0 0 1.1-2.8l-.1-.1a1.9 1.9 0 1 1 2.7-2.7l.1.1a1.6 1.6 0 0 0 1.8.3h.1a1.6 1.6 0 0 0 1-1.5v-.3a1.9 1.9 0 0 1 3.8 0v.2a1.6 1.6 0 0 0 2.7 1.1l.1-.1a1.9 1.9 0 1 1 2.7 2.7l-.1.1a1.6 1.6 0 0 0 1.1 2.7h.3a1.9 1.9 0 0 1 0 3.8h-.2a1.6 1.6 0 0 0-1.5 1z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"></path></svg></button>
+          <div class="hkpop">
+            <div class="hkpop-h">Settings</div>
+            <div class="setrow">
+              <span class="setlab">Appearance</span>
+              <button type="button" class="themepill" onClick="{{toggleTheme}}" aria-label="Switch between light and dark theme" title="Switch between light and dark theme"><span class="themeseg" style="background:{{lightSegBg}};color:{{lightSegFg}};box-shadow:{{lightSegShadow}}">Light</span><span class="themeseg" style="background:{{darkSegBg}};color:{{darkSegFg}}">Dark</span></button>
+            </div>
+            <div class="setrow"><span class="setlab">Notifications</span><span class="setval">Email and in‑app</span></div>
+            <div class="setrow"><span class="setlab">Time zone</span><span class="setval">Philippine Standard Time<br>(UTC+8)</span></div>
+            <div class="setrow"><span class="setlab">Enrolled section</span><span class="setval">Section A</span></div>
+            <a class="hkpop-f" href="#">Account and privacy settings</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <header class="hx hx-amber cp-head"><div class="hx-body">
+      <div class="eyebrow" style="margin-bottom:var(--s2)">Team capstone · Weeks 13 to 20</div>
+      <h1 class="cm-title">Structural Inspection Assistant</h1>
+      <p class="cm-lede" style="margin:var(--s3) 0 0">Build an AI assistant that <mark class="mk">triages inspection photos</mark> and drafts a summary for an engineer to review.</p>
+      <div class="cp-chips"><span class="chip-i">20% of final grade</span><span class="chip-i">Teams of students</span><span class="chip-i">Starts Week 13</span></div>
+    </div><div class="hx-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V4M5 4h11l-2 4 2 4H5"/></svg></div></header>
+
+    <div class="sect">
+      <div class="sect-h">
+        <h2 class="sect-t">What to do now</h2>
+        <span class="sect-n">Week 7 of 20 · the project itself opens in Week 13</span>
+      </div>
+      <p class="cm-lede cm-r" style="margin:0 0 var(--s4)">No team yet. <mark class="mk">Build the skills you will need</mark>, and arrive in Week 13 with an idea.</p>
+      <div class="now">
+        <a class="now-i first" href="Lesson.dc.html">
+          <span class="now-n">1</span>
+          <span class="now-t">Finish the Week 7 attention laboratory</span>
+          <span class="now-d">It teaches the vision-transformer idea your image triage stage is built on.</span>
+          <span class="now-w">This week · Open the lesson workspace</span>
+        </a>
+        <div class="now-i">
+          <span class="now-n">2</span>
+          <span class="now-t">Keep scouting datasets</span>
+          <span class="now-d">Your idea brief is in. Collect candidate photo sets of cracks, spalling and corrosion, and note each licence.</span>
+          <span class="now-w">Before Week 13</span>
+        </div>
+        <div class="now-i">
+          <span class="now-n">3</span>
+          <span class="now-t">Plan your team</span>
+          <span class="now-d">Registration opens on 25 November 2026. Talk to classmates now about roles and strengths.</span>
+          <span class="now-w">Week 13 · 25 November 2026</span>
+        </div>
+      </div>
+    </div>
+    <div class="sect">
+      <div class="sect-h">
+        <h2 class="sect-t">The project</h2>
+        <span class="sect-n">Version 1: triage and draft only</span>
+      </div>
+      <div class="cp2">
+        <div class="card" style="padding:22px 24px">
+          <p class="cp-prob">Inspectors must sort photos of cracks, spalling and corrosion, then write a summary based on the right checklist.</p>
+          <ol class="flow" aria-label="How the assistant works">
+            <li><span class="fl-n">1</span><span class="fl-t">Photo in</span></li>
+            <li><span class="fl-n">2</span><span class="fl-t">Classify<small>crack · spalling · corrosion · none</small></span></li>
+            <li><span class="fl-n">3</span><span class="fl-t">Find checklist items<small>RAG</small></span></li>
+            <li><span class="fl-n">4</span><span class="fl-t">Draft summary<small>for the engineer</small></span></li>
+          </ol>
+          <div class="callout" style="margin-top:var(--s3)"><p style="font-size:15px;color:var(--text);margin:0"><b style="font-weight:600">AI-use rule:</b> <mark class="mk">a licensed engineer makes every pass or fail decision.</mark> The assistant never signs off on safety.</p></div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:14px">
+            <span class="badge" style="background:var(--cyan-soft-bg);color:var(--cyan-text);border:1px solid var(--cyan-soft-border)">Vision · ViT / CLIP</span>
+            <span class="badge" style="background:var(--indigo-soft-bg);color:var(--indigo);border:1px solid var(--indigo-soft-border)">RAG over checklists</span>
+            <span class="badge" style="background:var(--amber-soft-bg);color:var(--amber-text);border:1px solid var(--amber-soft-border)">NeMo Guardrails</span>
+          </div>
+        </div>
+        <div class="card" style="padding:22px 24px">
+          <div class="cp-k">Where you are</div>
+          <div class="cp-v">Pre-work · Week 7 of 20</div>
+          <div class="bar" style="margin:12px 0 6px"><div class="barfill" style="width:0%;background:var(--accent)"></div></div>
+          <div class="cp-s">Idea brief submitted. Dataset scouting in progress.</div>
+          <div class="cp-k" style="margin-top:var(--s4)">Next</div>
+          <div class="cp-v">Team registration</div>
+          <div class="cp-s">Week 13 · 25 November 2026</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sect">
+      <div class="sect-h">
+        <h2 class="sect-t">Milestones</h2>
+        <span class="sect-n">Three deadlines</span>
+      </div>
+      <div class="ms3">
+        <sc-for list="{{milestones}}" as="m" hint-placeholder-count="3">
+          <article class="mscard">
+            <div class="ms-top"><span class="ms-wk">Week {{m.week}}</span><span class="ms-d">{{m.date}}</span></div>
+            <h3 class="ms-t">{{m.title}}</h3>
+            <p class="ms-w">{{m.weight}}</p>
+            <ul class="ms-l">
+              <sc-for list="{{m.bring}}" as="b" hint-placeholder-count="3"><li>{{b}}</li></sc-for>
+            </ul>
+            <details class="ms-more">
+              <summary>Full checklist</summary>
+              <ul>
+                <sc-for list="{{m.items}}" as="i" hint-placeholder-count="4"><li>{{i}}</li></sc-for>
+              </ul>
+            </details>
+            <span class="badge ms-b" style="background:{{m.chipBg}};color:{{m.chipFg}};border:1px solid {{m.chipBorder}}">{{m.status}}</span>
+          </article>
+        </sc-for>
+      </div>
+    </div>
+
+    <div class="sect">
+      <div class="sect-h">
+        <h2 class="sect-t">How you are graded</h2>
+        <span class="sect-n">100% of the capstone grade</span>
+      </div>
+      <div class="card" style="padding:22px 24px">
+        <div style="display:flex;height:14px;border-radius:999px;overflow:hidden;margin-bottom:var(--s3);gap:2px" aria-hidden="true">
+          <div style="width:15%;background:var(--accent)"></div><div style="width:40%;background:var(--accent-strong)"></div><div style="width:15%;background:var(--cyan)"></div><div style="width:20%;background:var(--amber)"></div><div style="width:10%;background:var(--indigo)"></div>
+        </div>
+        <ul class="rub">
+          <li><span class="rb-s" style="background:var(--accent)"></span><b>Problem and proposal</b><span class="rb-w">15%</span><span class="rb-d">Clear problem, user and scope</span></li>
+          <li><span class="rb-s" style="background:var(--accent-strong)"></span><b>Technical implementation</b><span class="rb-w">40%</span><span class="rb-d">Live demo, baseline comparison, an unscripted input</span></li>
+          <li><span class="rb-s" style="background:var(--cyan)"></span><b>Responsible AI</b><span class="rb-w">15%</span><span class="rb-d">Risks named, mitigations shown, limits stated</span></li>
+          <li><span class="rb-s" style="background:var(--amber)"></span><b>Presentation</b><span class="rb-w">20%</span><span class="rb-d">Clear, on time, every member speaks</span></li>
+          <li><span class="rb-s" style="background:var(--indigo)"></span><b>Documentation</b><span class="rb-w">10%</span><span class="rb-d">README and report match the demo</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="sect">
+      <div class="sect-h">
+        <h2 class="sect-t">Team and adviser</h2>
+        <span class="sect-n">Registration opens Week 13</span>
+      </div>
+      <div class="cp2">
+        <div class="card" style="padding:8px 24px">
+          <div class="logrow"><span class="lg-k">Roles</span><span class="lg-v">Team lead · Technical lead · Responsible-AI lead</span></div>
+          <div class="logrow"><span class="lg-k">Register</span><span class="lg-v">With a backup topic</span></div>
+          <div class="logrow"><span class="lg-k">Adviser</span><span class="lg-v">Dr. J. A. Jose · Faculty Room 5, by appointment</span></div>
+          <div class="logrow"><span class="lg-k">Repository</span><span class="lg-v">Created for your team at registration</span></div>
+        </div>
+        <div class="card" style="padding:22px 24px">
+          <div class="cp-k">Adviser note · Week 7</div>
+          <p class="cp-note">Strong, real-world problem. Keep an engineer in the loop, scope version 1 to triage, and <mark class="mk">check dataset licences now.</mark></p>
+        </div>
+      </div>
+    </div>
+    <footer class="sitefoot">
+      <div class="sf-top">
+        <div class="sf-brand">
+          <svg viewBox="0 0 360 310" aria-hidden="true"><polygon points="5,308 140,6 275,308 225,308 142,116 55,308" fill="var(--accent)"></polygon><circle cx="250" cy="73" r="40" fill="var(--accent)"></circle><rect x="308" y="13" width="47" height="295" fill="var(--accent)"></rect></svg>
+          <span class="sf-bt"><b>AI Academy</b><span>A Supervaise and NVIDIA programme in generative artificial intelligence.</span></span>
+        </div>
+        <nav class="sf-cols" aria-label="Footer">
+          <div class="sf-col">
+            <h4>Programme</h4>
+            <a href="CourseMap.dc.html">Course outline</a>
+            <a href="Lesson.dc.html">Lesson workspace</a>
+            <a href="Capstone.dc.html">Capstone project</a>
+          </div>
+          <div class="sf-col">
+            <h4>Assessment</h4>
+            <a href="PracticeExam.dc.html">Examination preparation</a>
+            <a href="Certificates.dc.html">Credentials and records</a>
+            <a href="PromptWorkshop.dc.html">Practical workshops</a>
+          </div>
+          <div class="sf-col">
+            <h4>Institution</h4>
+            <a href="Educator.dc.html">Faculty console</a>
+            <a href="mailto:anthony.jose@supervaise.io">Programme office</a>
+            <a href="#">Academic integrity policy</a>
+          </div>
+        </nav>
+      </div>
+      <div class="sf-bot">
+        <span>© 2026 Supervaise Inc. All rights reserved.</span>
+        <span class="sf-soc">
+          <a href="https://instagram.com/supervaise_ph" target="_blank" rel="noopener" aria-label="Supervaise on Instagram"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3.2" y="3.2" width="17.6" height="17.6" rx="5.2" stroke="currentColor" stroke-width="1.7"></rect><circle cx="12" cy="12" r="4.1" stroke="currentColor" stroke-width="1.7"></circle><circle cx="17.1" cy="6.9" r="1.25" fill="currentColor"></circle></svg></a>
+          <a href="https://linkedin.com/company/supervaise" target="_blank" rel="noopener" aria-label="Supervaise on LinkedIn"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3.2" y="3.2" width="17.6" height="17.6" rx="4.4" stroke="currentColor" stroke-width="1.7"></rect><circle cx="7.8" cy="8.1" r="1.35" fill="currentColor"></circle><rect x="6.75" y="10.5" width="2.1" height="7" fill="currentColor"></rect><path d="M11.2 17.5v-7h2.05v1.03a2.75 2.75 0 0 1 2.35-1.23c1.76 0 2.8 1.14 2.8 3.16v4.04h-2.1v-3.76c0-1.04-.45-1.65-1.37-1.65-.95 0-1.63.7-1.63 1.82v3.59z" fill="currentColor"></path></svg></a>
+          <a href="https://supervaise.io" target="_blank" rel="noopener" aria-label="supervaise.io"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="8.8" stroke="currentColor" stroke-width="1.7"></circle><path d="M3.2 12h17.6" stroke="currentColor" stroke-width="1.7"></path><path d="M12 3.2c2.3 2.4 3.5 5.5 3.5 8.8s-1.2 6.4-3.5 8.8c-2.3-2.4-3.5-5.5-3.5-8.8S9.7 5.6 12 3.2z" stroke="currentColor" stroke-width="1.7"></path></svg></a>
+          <a href="mailto:anthony.jose@supervaise.io" aria-label="Email the programme office"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="2.8" y="5" width="18.4" height="14" rx="3.2" stroke="currentColor" stroke-width="1.7"></rect><path d="M4.2 7.6 12 13l7.8-5.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg></a>
+        </span>
+        <span class="sf-power"><span class="sf-pw-l">Powered by</span><img class="sf-nv nvl-d" src="/_blob/f316a2796fca160c9156daf0f939dde7" alt="NVIDIA"><img class="sf-nv nvl-l" src="/_blob/beac3dd2beaf37c159727568d4b834d3" alt="NVIDIA"><strong>DGX Spark</strong></span>
+      </div>
+    </footer>
+   </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":960}}'>
+const THEME_KEY = 'supervaise-theme';
+const THEME_EVENT = 'supervaise-theme-change';
+const DARK_VARS = "--nv-dark:block;--nv-light:none;--bg:#090A0F;--text:#FFFFFF;--text2:#94A3B8;--text3:#6B7385;--card-bg:rgba(18,20,28,0.72);--card-border:rgba(255,255,255,0.08);--card-shadow:rgba(0,0,0,0.35);--card-shadow-hover:rgba(0,0,0,0.45);--elev:0 8px 24px rgba(0,0,0,0.35);--scrollbar:#1A1D28;--accent:#76B900;--accent-strong:#8FD400;--accent-bright:#B6F23A;--accent-cta-bg:#76B900;--accent-cta-text:#090A0F;--accent-soft-bg:rgba(118,185,0,0.14);--accent-soft-border:rgba(118,185,0,0.3);--accent-soft-text:#B6F23A;--accent-ghost-bg:rgba(118,185,0,0.08);--accent-ghost-border:rgba(118,185,0,0.25);--accent-glow:rgba(118,185,0,0.55);--accent-glow-soft:rgba(118,185,0,0.6);--accent-pulse:rgba(118,185,0,0.55);--accent-pulse-soft:rgba(118,185,0,0.12);--surface2:rgba(255,255,255,0.05);--surface2-border:rgba(255,255,255,0.08);--divider:rgba(255,255,255,0.08);--cyan:#00E5FF;--cyan-text:#67E8F9;--cyan-chip-bg:#00E5FF;--cyan-chip-text:#06202A;--cyan-glow:rgba(0,229,255,0.45);--cyan-soft-bg:rgba(0,229,255,0.07);--cyan-soft-border:rgba(0,229,255,0.22);--indigo:#8B83F0;--indigo-soft-bg:rgba(91,81,216,0.14);--indigo-soft-border:rgba(91,81,216,0.35);--amber:#FFA000;--amber-text:#FFB84D;--amber-soft-bg:rgba(255,160,0,0.14);--amber-soft-border:rgba(255,160,0,0.3);--amber-ghost-bg:rgba(255,160,0,0.08);--amber-ghost-border:rgba(255,160,0,0.25);--amber-pulse:rgba(255,160,0,0.5);--amber-pulse-soft:rgba(255,160,0,0.14);--red-soft-bg:rgba(239,68,68,0.14);--red-border:rgba(239,68,68,0.45);--red-text:#FCA5A5;--neutral-chip-bg:transparent;--neutral-chip-text:#A0A5B5;--neutral-chip-border:rgba(255,255,255,0.15);--mono-chip-bg:rgba(255,255,255,0.06);--mono-chip-text:#A0A5B5;--mono-chip-today-bg:rgba(255,160,0,0.14);--mono-chip-today-text:#FFB84D;--track:rgba(255,255,255,0.08);--footer-text:#6B7385;--footer-bg:rgba(255,255,255,0.04);--footer-border:rgba(255,255,255,0.08);--avatar-ring:rgba(118,185,0,0.6);--toggle-bg:rgba(255,255,255,0.05);--toggle-border:rgba(255,255,255,0.08);--spot1:rgba(118,185,0,0.22);--spot2:rgba(0,229,255,0.14);--spot3:rgba(91,81,216,0.16);";
+const LIGHT_VARS = "--nv-dark:none;--nv-light:block;--bg:#F8FAFC;--text:#0F172A;--text2:#475569;--text3:#64748B;--card-bg:#FFFFFF;--card-border:#E2E8F0;--card-shadow:rgba(15,23,42,0.06);--card-shadow-hover:rgba(15,23,42,0.1);--elev:0 4px 6px -1px rgba(0,0,0,0.05),0 2px 4px -2px rgba(0,0,0,0.05);--scrollbar:#CBD5E1;--accent:#659B00;--accent-strong:#4F7A00;--accent-bright:#3D5F00;--accent-cta-bg:#4F7A00;--accent-cta-text:#FFFFFF;--accent-soft-bg:rgba(101,155,0,0.12);--accent-soft-border:rgba(101,155,0,0.35);--accent-soft-text:#4F7A00;--accent-ghost-bg:rgba(101,155,0,0.08);--accent-ghost-border:rgba(101,155,0,0.3);--accent-glow:rgba(101,155,0,0.35);--accent-glow-soft:rgba(101,155,0,0.3);--accent-pulse:rgba(101,155,0,0.4);--accent-pulse-soft:rgba(101,155,0,0.1);--surface2:#F1F5F9;--surface2-border:#E2E8F0;--divider:#E2E8F0;--cyan:#0284C7;--cyan-text:#0369A1;--cyan-chip-bg:#0284C7;--cyan-chip-text:#FFFFFF;--cyan-glow:rgba(2,132,199,0.3);--cyan-soft-bg:rgba(2,132,199,0.08);--cyan-soft-border:rgba(2,132,199,0.28);--indigo:#4F46E5;--indigo-soft-bg:rgba(79,70,229,0.08);--indigo-soft-border:rgba(79,70,229,0.25);--amber:#D97706;--amber-text:#B45309;--amber-soft-bg:rgba(217,119,6,0.12);--amber-soft-border:rgba(217,119,6,0.32);--amber-ghost-bg:rgba(217,119,6,0.08);--amber-ghost-border:rgba(217,119,6,0.28);--amber-pulse:rgba(217,119,6,0.35);--amber-pulse-soft:rgba(217,119,6,0.12);--red-soft-bg:#FEF2F2;--red-border:#FECACA;--red-text:#B91C1C;--neutral-chip-bg:#F1F5F9;--neutral-chip-text:#475569;--neutral-chip-border:#E2E8F0;--mono-chip-bg:#F1F5F9;--mono-chip-text:#475569;--mono-chip-today-bg:rgba(217,119,6,0.12);--mono-chip-today-text:#B45309;--track:#E2E8F0;--footer-text:#64748B;--footer-bg:#F1F5F9;--footer-border:#E2E8F0;--avatar-ring:rgba(101,155,0,0.45);--toggle-bg:#F1F5F9;--toggle-border:#E2E8F0;--spot1:rgba(101,155,0,0.10);--spot2:rgba(2,132,199,0.07);--spot3:rgba(79,70,229,0.08);";
+function readTheme() {
+  try { const s = localStorage.getItem(THEME_KEY); if (s === 'light' || s === 'dark') return s; } catch (e) {}
+  return 'light';
+}
+function saveTheme(t) {
+  try { localStorage.setItem(THEME_KEY, t); } catch (e) {}
+  try { window.dispatchEvent(new CustomEvent(THEME_EVENT, { detail: t })); } catch (e) {}
+}
+function bindThemeSync(comp) {
+  const onStorage = (e) => { if (e.key === THEME_KEY && (e.newValue === 'light' || e.newValue === 'dark') && e.newValue !== comp.state.theme) comp.setState({ theme: e.newValue }); };
+  const onLocal = (e) => { const t = e.detail; if ((t === 'light' || t === 'dark') && t !== comp.state.theme) comp.setState({ theme: t }); };
+  try { window.addEventListener('storage', onStorage); window.addEventListener(THEME_EVENT, onLocal); } catch (e) {}
+  return () => { try { window.removeEventListener('storage', onStorage); window.removeEventListener(THEME_EVENT, onLocal); } catch (e) {} };
+}
+function themeVals(dark) {
+  return {
+    themeVars: dark ? DARK_VARS : LIGHT_VARS,
+    lightSegBg: dark ? 'transparent' : '#FFFFFF', lightSegFg: dark ? '#94A3B8' : '#0F172A',
+    lightSegShadow: dark ? 'none' : '0 1px 2px rgba(15,23,42,0.12)',
+    darkSegBg: dark ? 'rgba(118,185,0,0.2)' : 'transparent', darkSegFg: dark ? '#B6F23A' : '#64748B'
+  };
+}
+
+const CURRENT_WEEK = 7;
+const TEMPLATES = {
+  proposal: { title: 'Proposal: required contents', items: [
+    'Project title, team name and members with roles (team lead, technical lead, responsible-AI lead)',
+    'Problem statement and intended users, approach and architecture diagram',
+    'Data sources and permissions, models and computing resource estimate',
+    'Evaluation plan and responsible-AI risk table',
+    'Timeline and roles, plus a 3-minute in-class presentation'
+  ]},
+  progress: { title: 'Progress review: required contents', items: [
+    'Status summary for data, core pipeline and demonstration notebook (done, in progress, not started or dropped)',
+    'A running prototype demonstrated to the adviser',
+    'First results and current blockers',
+    'Updated plan for the remaining weeks',
+    'Contribution table for every team member'
+  ]},
+  final: { title: 'Final report: required contents', items: [
+    'Executive summary: problem, user, what was built, one key result with a number, main limitation',
+    'About 6 to 10 pages plus appendices, submitted with the project folder',
+    'Scored under Documentation (10%); also supports Technical implementation and Responsible AI',
+    'Sources are credited; the README and report must match what the panel sees in the live demonstration'
+  ]},
+  judging: { title: 'Panel evaluation: how the final defence is scored', items: [
+    'Problem and proposal (15%): clear problem, user and sensible scope',
+    'Technical implementation (40%): live demonstration, evaluation against a baseline, handling of an unscripted panel input',
+    'Responsible AI (15%): risks named, mitigations shown working, limitations stated',
+    'Presentation (20%): clear structure, within time, every member speaks',
+    'Documentation (10%): README and report available and consistent with the demonstration'
+  ]}
+};
+const MILESTONES = [
+  { week: 15, date: '9 December 2026', title: 'Proposal', weight: '15% of capstone grade', state: 'upcoming',
+    bring: ['2 to 3 page proposal', 'Architecture diagram and risk table', '3-minute pitch to the class'], items: TEMPLATES.proposal.items },
+  { week: 18, date: '30 December 2026', title: 'Progress review', weight: 'Counts toward Technical implementation (40%)', state: 'upcoming',
+    bring: ['A working prototype', '10-minute review with your adviser', 'Attendance is mandatory'], items: TEMPLATES.progress.items },
+  { week: 20, date: '13 January 2027', title: 'Final defence', weight: 'Presentation 20% · Documentation 10%', state: 'upcoming',
+    bring: ['Live demo, 10-minute talk, 5-minute Q&A', 'Final report, 6 to 10 pages', 'Clean, runnable project folder'], items: TEMPLATES.final.items.concat(['Week 19 is reserved for building and the mock NCA-GENL exam']) }
+];
+const NOTES = [
+  { week: 'Week 7', text: 'Pipeline sketch: photograph, defect classifier (crack, spalling, corrosion or none), retrieval of matching checklist items, then a draft summary for engineer review.' },
+  { week: 'Week 7', text: 'Responsible-AI rule for version 1: the assistant triages and drafts, and does not issue a pass or fail safety sign-off.' },
+  { week: 'Week 6', text: 'Backup topic required for team formation: a retrieval-augmented assistant over laboratory-equipment manuals.' }
+];
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { theme: readTheme(), tpl: 'proposal' };
+    this.toggleTheme = this.toggleTheme.bind(this);
+  }
+  componentDidMount() { this._unbindTheme = bindThemeSync(this); }
+  componentWillUnmount() { if (this._unbindTheme) this._unbindTheme(); }
+  toggleTheme() { const next = this.state.theme === 'dark' ? 'light' : 'dark'; this.setState({ theme: next }); saveTheme(next); }
+  pick(key) { return this.state.tpl === key ? { bg: 'var(--accent-soft-bg)', border: 'var(--accent)' } : { bg: 'var(--card-bg)', border: 'var(--card-border)' }; }
+  hkVals() {
+    const cur = this.state.hkOpen || '';
+    const tog = (k) => () => this.setState({ hkOpen: (this.state.hkOpen || '') === k ? '' : k });
+    const cls = (k) => (cur === k ? 'hk is-open' : 'hk');
+    const ex = (k) => (cur === k ? 'true' : 'false');
+    return {
+      hkTogS: tog('s'), hkTogU: tog('u'), hkTogA: tog('a'), hkTogT: tog('t'),
+      hkClsS: cls('s'), hkClsU: cls('u'), hkClsA: cls('a'), hkClsT: cls('t'),
+      hkExS: ex('s'), hkExU: ex('u'), hkExA: ex('a'), hkExT: ex('t'),
+      hkScrim: cur ? 'block' : 'none',
+      hkClose: () => this.setState({ hkOpen: '' }),
+      hkKey: (e) => { if (e && e.key === 'Escape') this.setState({ hkOpen: '' }); }
+    };
+  }
+  renderVals() { return { ...this.renderVals0(), ...this.hkVals() }; }
+  renderVals0() {
+    const dark = this.state.theme === 'dark';
+    const milestones = MILESTONES.map((m) => {
+      let status, chipBg, chipFg, chipBorder, bar = 'var(--accent)';
+      if (m.state === 'done') { status = 'Submitted'; chipBg = 'var(--accent-soft-bg)'; chipFg = 'var(--accent-soft-text)'; chipBorder = 'var(--accent-soft-border)'; }
+      else if (m.state === 'active') { status = 'In progress'; chipBg = 'var(--amber-soft-bg)'; chipFg = 'var(--amber-text)'; chipBorder = 'var(--amber-soft-border)'; bar = 'var(--amber)'; }
+      else { status = 'Not started'; chipBg = 'var(--neutral-chip-bg)'; chipFg = 'var(--neutral-chip-text)'; chipBorder = 'var(--neutral-chip-border)'; }
+      return { week: m.week, date: m.date, title: m.title, weight: m.weight, bring: m.bring, items: m.items, status, chipBg, chipFg, chipBorder };
+    });
+    const feedback = [
+      { who: 'Faculty adviser', when: 'Week 7 consultation hours', initials: 'CI', avBg: 'var(--accent-soft-bg)', avFg: 'var(--accent-soft-text)',
+        text: 'Strong, real-world problem. Keep a licensed engineer in the loop and scope version 1 to triage, not pass or fail decisions. Begin checking dataset licences now.' }
+    ];
+    const p = this.pick('proposal'), g = this.pick('progress'), f = this.pick('final'), j = this.pick('judging');
+    const t = TEMPLATES[this.state.tpl];
+    return {
+      ...themeVals(dark), toggleTheme: this.toggleTheme,
+      milestones, notes: NOTES, feedback,
+      proposalBg: p.bg, proposalBorder: p.border, progressBg: g.bg, progressBorder: g.border,
+      finalBg: f.bg, finalBorder: f.border, judgingBg: j.bg, judgingBorder: j.border,
+      pickProposal: () => this.setState({ tpl: 'proposal' }), pickProgress: () => this.setState({ tpl: 'progress' }),
+      pickFinal: () => this.setState({ tpl: 'final' }), pickJudging: () => this.setState({ tpl: 'judging' }),
+      tplTitle: t.title, tplItems: t.items
+    };
+  }
+}
+
+</script>
+</body>
+</html>
