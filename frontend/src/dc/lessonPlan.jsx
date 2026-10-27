@@ -267,6 +267,7 @@ export function prepare(markdown) {
           return;
         }
         el.className = isLab && tag === 'OL' ? 'lsteps' : 'plist';
+        if (el.className === 'lsteps') el.style.counterReset = `step ${(Number(el.getAttribute('start')) || 1) - 1}`;
       } else if (tag === 'H3') {
         el.className = 'h3';
         el.id = `${id}-${slugify(el.textContent)}`;
@@ -277,6 +278,17 @@ export function prepare(markdown) {
       sec.appendChild(el);
     });
     out.appendChild(sec);
+  });
+
+  // "*Exercise 3:* …" paragraphs and steps become a highlighted callout with a badge
+  out.querySelectorAll('p.prose, .lsteps > li, .plist > li').forEach((el) => {
+    const lead = el.firstElementChild;
+    if (!lead || lead.tagName !== 'EM' || !/^Exercise\b/i.test(lead.textContent.trim())) return;
+    el.classList.add('exercise');
+    const badge = document.createElement('span');
+    badge.className = 'ex-badge';
+    badge.textContent = lead.textContent.trim().replace(/:$/, '');
+    lead.replaceWith(badge);
   });
 
   view.html = out.innerHTML;
@@ -401,7 +413,7 @@ export function PlanView({ plan, view }) {
   };
 
   return (
-    <>
+    <div className="lp-root">
       <header className="lhead hx hx-cyan">
         <div className="hx-body">
           <h1 className="lh-title">{headline}</h1>
@@ -458,7 +470,7 @@ export function PlanView({ plan, view }) {
         const w = view.widgets[Number(h.getAttribute('data-w'))];
         return w ? createPortal(<Widget kind={w.kind} spec={w.spec} error={w.error} fig={w.fig} />, h, h.getAttribute('data-w')) : null;
       })}
-    </>
+    </div>
   );
 }
 

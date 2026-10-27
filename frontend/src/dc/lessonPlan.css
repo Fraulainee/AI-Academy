@@ -267,3 +267,62 @@
   .hk-bar span.t{height:10px;border-radius:999px;background:var(--track);overflow:hidden;display:block}
   .hk-bar span.t i{display:block;height:100%;background:var(--accent);border-radius:999px}
   @media (prefers-reduced-motion: reduce){.hk-tokc{animation:none}}
+
+  /* ---- easier to read: a slightly larger type scale for lesson plans ---- */
+  .lp-root{--fs-body:18.5px;--fs-body-ui:17.5px;--fs-detail:16.5px;--fs-sec-lede:20px;--fs-h3:20.5px;--fs-lede:clamp(20px,1.7vw,23px);--fs-h2:clamp(26px,2.2vw,31px);--lh-body:1.7}
+  .lp-root{--measure:41rem}
+  .lp-root .rail a{font-size:14px}
+  .lp-root .hk-lab,.lp-root .hook-k{font-size:14px}
+  .lp-root .hook-cap{font-size:var(--fs-detail)}
+  .lp-root .hk-tab,.lp-root .hk-pause{font-size:14px}
+  .lp-root .icode{font-size:15px}
+  .lp-root .code{font-size:14px;line-height:1.7}
+  .lp-root .codebar{font-size:13.5px}
+  .lp-root .wp-prose th{font-size:13.5px}
+  .lp-root .wp-prose .wg-p{font-size:16.5px}
+  .lp-root .wp-prose .wg-note{font-size:14.5px}
+  .lp-root .wp-prose .wg-btn{font-size:15px}
+  .lp-root .wp-prose .wg-chip{font-size:14px}
+  .lp-root .wp-prose .wg-tab{font-size:15px}
+  .lp-root .wp-prose .wg-fig{font-size:14px}
+  .lp-root .wp-prose .wg-t{font-size:21px}
+  .lp-root .wp-prose .wg-opt{font-size:16px}
+  .lp-root .wp-prose .wg-q legend{font-size:18px}
+  .lp-root .wp-prose .wg-why{font-size:15px}
+  .lp-root .wp-prose .wg-card-n{font-size:16.5px}
+  .lp-root .wp-prose .wg-card .wg-btn{font-size:14px}
+  .lp-root .wp-prose .wg-k{font-size:12px}
+  .lp-root .wp-prose .wg-v{font-size:16px}
+  .lp-root .wp-prose .wg-detail-t{font-size:17px}
+  .lp-root .wp-prose .wg-nt{font-size:14px}
+  .lp-root .wp-prose .wg-slide{font-size:15.5px}
+  .lp-root .wp-prose .wg-bars li{font-size:15px}
+  .lp-root .wp-prose .vz-node-l{font-size:15.5px}
+  .lp-root .wp-prose .vz-node-s{font-size:13px}
+  .lp-root .wp-prose .vz-calc,.lp-root .wp-prose .vz-prompt{font-size:14px}
+  .lp-root .wp-prose .vz-tok{font-size:14.5px}
+  .lp-root .wp-prose .vz-wc{font-size:15px}
+  .lp-root .wp-prose .vz-cell{font-size:14px;height:38px}
+  .lp-root .wp-prose .vz-hm{font-size:13.5px}
+  .lp-root .wp-prose .vz-hm th,.lp-root .wp-prose .vz-rowbtn{font-size:13.5px}
+  .lp-root .wp-prose .vz-near,.lp-root .wp-prose .vz-gen li,.lp-root .wp-prose .vz-corpus{font-size:15.5px}
+  .lp-root .wp-prose .vz-rank-h{font-size:15.5px}
+  .lp-root .wp-prose .wg-score-n{font-size:34px}
+  .lp-root .wp-prose .wg-ra,.lp-root .wp-prose .wg-rq{font-size:16px}
+
+  /* lab steps: big numbered badges, bold step titles */
+  .wp-prose .lsteps{padding-left:0;list-style:none}
+  .wp-prose .lsteps > li{position:relative;list-style:none;padding:2px 0 2px 52px;margin:0 0 var(--s4);min-height:36px;counter-increment:step;color:var(--text);font-size:var(--fs-body-ui);line-height:1.6}
+  .wp-prose .lsteps > li::before{content:counter(step);position:absolute;left:0;top:0;width:38px;height:38px;border-radius:999px;background:var(--accent);color:var(--accent-cta-text);display:flex;align-items:center;justify-content:center;font-family:'Plus Jakarta Sans',system-ui,sans-serif;font-size:18px;font-weight:800;line-height:1;box-shadow:0 0 0 4px var(--accent-soft-bg)}
+  .wp-prose .lsteps > li > em:first-child{font-style:normal;font-weight:700;color:var(--text);font-size:1.12em}
+  .wp-prose .lsteps + .codebox,.wp-prose .lsteps ~ .codebox{margin-left:52px}
+  .lw .wp-prose .lsteps ~ .codebox{width:calc(100% - 52px);max-width:calc(100% - 52px)}
+  .wp-prose .lsteps ~ p.prose:not(.exercise){margin-left:52px}
+
+  /* exercises: a callout you cannot miss */
+  .wp-prose .exercise{position:relative;max-width:var(--measure);margin:var(--s3) 0 var(--s4);padding:14px 18px 14px 20px;border-left:5px solid var(--amber);border-radius:0 12px 12px 0;background:var(--amber-soft-bg);color:var(--text);font-style:normal}
+  .wp-prose p.exercise{margin-left:52px;max-width:calc(var(--measure) - 52px)}
+  .wp-prose .lsteps ~ p.exercise{margin-left:52px}
+  .wp-prose .ex-badge{display:inline-flex;align-items:center;margin:0 10px 4px 0;padding:3px 12px;border-radius:999px;background:var(--amber);color:#1a1200;font-family:'Plus Jakarta Sans',system-ui,sans-serif;font-size:13.5px;font-weight:800;letter-spacing:.02em;line-height:1.4;vertical-align:1px}
+  .wp-prose .exercise code,.wp-prose .exercise .icode{background:var(--card-bg)}
+  @media (max-width:760px){.lw .wp-prose .lsteps ~ .codebox{width:100%;max-width:100%}.wp-prose .lsteps > li{padding-left:46px}.wp-prose .lsteps + .codebox,.wp-prose .lsteps ~ .codebox,.wp-prose .lsteps ~ p.prose:not(.exercise),.wp-prose p.exercise,.wp-prose .lsteps ~ p.exercise{margin-left:0;max-width:none}}
