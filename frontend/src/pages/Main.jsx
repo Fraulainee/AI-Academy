@@ -7,6 +7,7 @@ import DCLogic from '../dc/DCLogic.jsx';
 import DcLink from '../dc/DcLink.jsx';
 import { css } from '../dc/css.js';
 import pageCss from './Main.css?inline';
+import { CURRENT_WEEK, TOTAL_WEEKS, getWeek, activityStatus } from '../data/courseWeeks.js';
 
 const THEME_KEY = 'supervaise-theme';
 const THEME_EVENT = 'supervaise-theme-change';
@@ -82,7 +83,6 @@ const COURSE_WEEKS = [
   { week: 19, term: 'Final', title: 'Capstone Build Week + Mock NCA-GENL Exam', exam: false },
   { week: 20, term: 'Final', title: 'FINAL EXAM & Demo Day', exam: true },
 ];
-const CURRENT_WEEK = 7;
 const STAGES = [
   {
     name: 'Neural network foundations',
@@ -227,7 +227,25 @@ class Component extends DCLogic {
       cls: w.week === CURRENT_WEEK ? 'pulseamber' : '',
       mark: w.exam ? '\u25C6' : '',
     }));
+    const wk = getWeek(this.props.week);
+    const BADGE = {
+      Completed: { background: 'var(--accent-soft-bg)', color: 'var(--accent-soft-text)', border: '1px solid var(--accent-soft-border)' },
+      'In progress': { background: 'var(--amber-soft-bg)', color: 'var(--amber-text)', border: '1px solid var(--amber-soft-border)' },
+      'Not started': { background: 'var(--neutral-chip-bg)', color: 'var(--neutral-chip-text)', border: '1px solid var(--neutral-chip-border)' },
+    };
+    const isNow = wk.week === CURRENT_WEEK;
+    const eyebrow = isNow ? 'Next action' : wk.week < CURRENT_WEEK ? 'Review' : 'Coming up';
     return {
+      wk,
+      weekOf: 'Week ' + wk.week + ' of ' + TOTAL_WEEKS,
+      eyebrow: eyebrow + ' · Week ' + wk.week + ' of ' + TOTAL_WEEKS,
+      scheduleHead: (isNow ? 'Today' : 'Week ' + wk.week) + ' · ' + wk.sessionsDate,
+      sessionsHead: isNow ? 'Sessions today' : 'Sessions this week',
+      studentLine: 'Student · Week ' + CURRENT_WEEK,
+      activities: wk.activities.map((a) => {
+        const status = activityStatus(wk.week, wk.activities.indexOf(a));
+        return { ...a, status, badge: BADGE[status] };
+      }),
       ...themeVals(dark),
       toggleTheme: this.toggleTheme,
       toggleMap: this.toggleMap,
@@ -338,7 +356,7 @@ function template(v) {
               </div>
               <div style={{ minWidth: '0' }}>
                 <div style={{ fontSize: '13px', fontWeight: '700', color: '#FFFFFF', lineHeight: '1.3' }}>{v.userName}</div>
-                <div style={{ fontSize: '11.5px', color: '#9BA3AF', lineHeight: '1.4' }}>{'Student · Week 7'}</div>
+                <div style={{ fontSize: '11.5px', color: '#9BA3AF', lineHeight: '1.4' }}>{v.studentLine}</div>
                 <div style={{ marginTop: '6px' }}>
                   <span
                     style={{
@@ -371,8 +389,8 @@ function template(v) {
             <div className="ctx">
               <span className="ctx-i">{'A.Y. 2026/2027'}</span> <span className="ctx-s" aria-hidden="true"></span>{' '}
               <span className="ctx-i">{'Second Semester'}</span> <span className="ctx-s" aria-hidden="true"></span>{' '}
-              <span className="ctx-i ctx-now">{'Week 7 of 20'}</span> <span className="ctx-s" aria-hidden="true"></span>{' '}
-              <span className="ctx-i">{'Midterm Term'}</span>
+              <span className="ctx-i ctx-now">{v.weekOf}</span> <span className="ctx-s" aria-hidden="true"></span>{' '}
+              <span className="ctx-i">{v.wk.termLabel}</span>
             </div>
             <div className="hkbar" role="toolbar" aria-label="Course tools" onKeyDown={v.hkKey}>
               <div className="hk-scrim" style={css(`display:${v.hkScrim}`)} onClick={v.hkClose}></div>
@@ -392,29 +410,17 @@ function template(v) {
                   </svg>
                 </button>
                 <div className="hkpop">
-                  <div className="hkpop-h">{'Today · Wednesday, 14 October 2026'}</div>
+                  <div className="hkpop-h">{v.scheduleHead}</div>
                   <ul className="hkl">
-                    <li>
-                      <span className="hkt">{'08:00'}</span>
-                      <span className="hkd">
-                        <b>{'Lecture 7.1: Attention mechanisms'}</b>
-                        <span className="hkm">{'Room CS‑204 · Dr. J. A. Jose'}</span>
-                      </span>
-                    </li>
-                    <li>
-                      <span className="hkt">{'10:30'}</span>
-                      <span className="hkd">
-                        <b>{'Laboratory 3: Scaled dot‑product attention'}</b>
-                        <span className="hkm">{'Computing Laboratory 2 · Attendance required'}</span>
-                      </span>
-                    </li>
-                    <li>
-                      <span className="hkt">{'14:00'}</span>
-                      <span className="hkd">
-                        <b>{'Consultation hours'}</b>
-                        <span className="hkm">{'By appointment · Faculty Room 5'}</span>
-                      </span>
-                    </li>
+                    {(v.wk.sessions || []).map((ss, $index) => (
+                      <li key={$index}>
+                        <span className="hkt">{ss.time}</span>
+                        <span className="hkd">
+                          <b>{ss.title}</b>
+                          <span className="hkm">{ss.note}</span>
+                        </span>
+                      </li>
+                    ))}
                   </ul>
                   <DcLink className="hkpop-f" href="CourseMap.dc.html">
                     {'View the full course schedule'}
@@ -591,19 +597,22 @@ function template(v) {
           <header className="hx hx-coral">
             <div className="hx-body">
               <div className="eyebrow" style={{ marginBottom: 'var(--s2)' }}>
-                {'Next action · Week 7 of 20'}
+                {v.eyebrow}
               </div>
               <h1 className="cm-title" style={{ fontSize: 'clamp(28px,3.4vw,42px)', lineHeight: '1.15', margin: '0 0 var(--s3)' }}>
-                {'Complete '}
-                <mark className="mk">{'Laboratory 3, Part 1'}</mark>
-                {': scaled dot-product attention'}
+                {v.wk.hero.lead}
+                <mark className="mk">{v.wk.hero.mark}</mark>
+                {v.wk.hero.rest}
               </h1>
               <div className="hx-meta">
-                <span className="chip-i">{'10% of final grade'}</span>
-                <span className="chip-i">{'Due 17 October 2026, 11:59 PM PHT'}</span>
+                {v.wk.hero.chips.map((c, $index) => (
+                  <span className="chip-i" key={$index}>
+                    {c}
+                  </span>
+                ))}
               </div>
-              <DcLink href="Lesson.dc.html" className="hx-cta">
-                {'Open Laboratory 3, Part 1 '}
+              <DcLink href={v.wk.lessonHref} className="hx-cta">
+                {v.wk.hero.cta}{' '}
                 <span aria-hidden="true">{'→'}</span>
               </DcLink>
             </div>
@@ -619,171 +628,58 @@ function template(v) {
           <div className="sect">
             <div className="sect-h">
               <h2 className="sect-t">{'This week'}</h2>
-              <span className="sect-n">{'Week 7 of 20 · Language models and attention'}</span>
+              <span className="sect-n">{v.weekOf + ' · ' + v.wk.short}</span>
             </div>
             <div className="ov-two" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '16px' }}>
               <div className="glass" style={{ padding: '22px' }}>
                 <div style={{ fontSize: '18.5px', fontWeight: '600', marginBottom: '12px', color: 'var(--text)' }}>
-                  {'Week 7 learning activities'}
+                  {'Week ' + v.wk.week + ' learning activities'}
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <div
-                    className="lift"
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      gap: '12px',
-                      padding: '12px 14px',
-                      borderRadius: '10px',
-                      border: '1px solid var(--divider)',
-                    }}
-                  >
-                    <div>
-                      <div style={{ fontSize: '16px', fontWeight: '600', color: 'var(--text)' }}>
-                        {'Lesson 7.1: Why attention replaced sequence models'}
+                  {(v.activities || []).map((a, $index) => (
+                    <div
+                      key={$index}
+                      className="lift"
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        gap: '12px',
+                        padding: '12px 14px',
+                        borderRadius: '10px',
+                        border: '1px solid var(--divider)',
+                      }}
+                    >
+                      <div>
+                        <div style={{ fontSize: '16px', fontWeight: '600', color: 'var(--text)' }}>{a.title}</div>
+                        <div style={{ fontSize: '14px', color: 'var(--text3)' }}>{a.note}</div>
                       </div>
-                      <div style={{ fontSize: '14px', color: 'var(--text3)' }}>{'Lecture and reading · Queries, keys and values'}</div>
+                      <span className="badge" style={a.badge}>
+                        {a.status}
+                      </span>
                     </div>
-                    <span
-                      className="badge"
-                      style={{
-                        background: 'var(--accent-soft-bg)',
-                        color: 'var(--accent-soft-text)',
-                        border: '1px solid var(--accent-soft-border)',
-                      }}
-                    >
-                      {'Completed'}
-                    </span>
-                  </div>
-                  <div
-                    className="lift"
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      gap: '12px',
-                      padding: '12px 14px',
-                      borderRadius: '10px',
-                      border: '1px solid var(--divider)',
-                    }}
-                  >
-                    <div>
-                      <div style={{ fontSize: '16px', fontWeight: '600', color: 'var(--text)' }}>{'Attention Explorer visualisation'}</div>
-                      <div style={{ fontSize: '14px', color: 'var(--text3)' }}>{'Guided exercise · Self-attention weights'}</div>
-                    </div>
-                    <span
-                      className="badge"
-                      style={{
-                        background: 'var(--amber-soft-bg)',
-                        color: 'var(--amber-text)',
-                        border: '1px solid var(--amber-soft-border)',
-                      }}
-                    >
-                      {'In progress'}
-                    </span>
-                  </div>
-                  <div
-                    className="lift"
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      gap: '12px',
-                      padding: '12px 14px',
-                      borderRadius: '10px',
-                      border: '1px solid var(--divider)',
-                    }}
-                  >
-                    <div>
-                      <div style={{ fontSize: '16px', fontWeight: '600', color: 'var(--text)' }}>
-                        {'Laboratory 3, Part 1: scaled dot-product attention'}
-                      </div>
-                      <div style={{ fontSize: '14px', color: 'var(--text3)' }}>
-                        {'Laboratory · Report due 17 October 2026, 11:59 PM PHT'}
-                      </div>
-                    </div>
-                    <span
-                      className="badge"
-                      style={{
-                        background: 'var(--neutral-chip-bg)',
-                        color: 'var(--neutral-chip-text)',
-                        border: '1px solid var(--neutral-chip-border)',
-                      }}
-                    >
-                      {'Not started'}
-                    </span>
-                  </div>
-                  <div
-                    className="lift"
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      gap: '12px',
-                      padding: '12px 14px',
-                      borderRadius: '10px',
-                      border: '1px solid var(--divider)',
-                    }}
-                  >
-                    <div>
-                      <div style={{ fontSize: '16px', fontWeight: '600', color: 'var(--text)' }}>{'Knowledge check 7.1: 20 questions'}</div>
-                      <div style={{ fontSize: '14px', color: 'var(--text3)' }}>{'Formative · Unweighted, unlimited attempts'}</div>
-                    </div>
-                    <span
-                      className="badge"
-                      style={{
-                        background: 'var(--neutral-chip-bg)',
-                        color: 'var(--neutral-chip-text)',
-                        border: '1px solid var(--neutral-chip-border)',
-                      }}
-                    >
-                      {'Not started'}
-                    </span>
-                  </div>
+                  ))}
                 </div>
               </div>
               <div className="glass" style={{ padding: '20px' }}>
-                <div style={{ fontSize: '18.5px', fontWeight: '600', marginBottom: '2px', color: 'var(--text)' }}>{'Sessions today'}</div>
+                <div style={{ fontSize: '18.5px', fontWeight: '600', marginBottom: '2px', color: 'var(--text)' }}>{v.sessionsHead}</div>
                 <div className="mono" style={{ fontSize: '13px', color: 'var(--text3)', fontWeight: '600', marginBottom: '12px' }}>
-                  {'Wednesday, 14 October 2026'}
+                  {v.wk.sessionsDate}
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  <div style={{ display: 'grid', gridTemplateColumns: '50px 1fr', gap: '10px', alignItems: 'start' }}>
-                    <span className="mono" style={{ fontSize: '13px', fontWeight: '500', color: 'var(--text3)' }}>
-                      {'08:00'}
-                    </span>
-                    <span>
-                      <span style={{ display: 'block', fontSize: '15px', fontWeight: '500', color: 'var(--text)', lineHeight: '1.4' }}>
-                        {'Lecture 7.1: Attention mechanisms'}
+                  {(v.wk.sessions || []).map((ss, $index) => (
+                    <div key={$index} style={{ display: 'grid', gridTemplateColumns: '50px 1fr', gap: '10px', alignItems: 'start' }}>
+                      <span className="mono" style={{ fontSize: '13px', fontWeight: '500', color: 'var(--text3)' }}>
+                        {ss.time}
                       </span>
-                      <span style={{ display: 'block', fontSize: '13px', color: 'var(--text3)' }}>{'Room CS‑204'}</span>
-                    </span>
-                  </div>
-                  <div style={{ display: 'grid', gridTemplateColumns: '50px 1fr', gap: '10px', alignItems: 'start' }}>
-                    <span className="mono" style={{ fontSize: '13px', fontWeight: '500', color: 'var(--text3)' }}>
-                      {'10:30'}
-                    </span>
-                    <span>
-                      <span style={{ display: 'block', fontSize: '15px', fontWeight: '500', color: 'var(--text)', lineHeight: '1.4' }}>
-                        {'Laboratory 3 session'}
+                      <span>
+                        <span style={{ display: 'block', fontSize: '15px', fontWeight: '500', color: 'var(--text)', lineHeight: '1.4' }}>
+                          {ss.title}
+                        </span>
+                        <span style={{ display: 'block', fontSize: '13px', color: 'var(--text3)' }}>{ss.note}</span>
                       </span>
-                      <span style={{ display: 'block', fontSize: '13px', color: 'var(--text3)' }}>
-                        {'Computing Laboratory 2 · Attendance required'}
-                      </span>
-                    </span>
-                  </div>
-                  <div style={{ display: 'grid', gridTemplateColumns: '50px 1fr', gap: '10px', alignItems: 'start' }}>
-                    <span className="mono" style={{ fontSize: '13px', fontWeight: '500', color: 'var(--text3)' }}>
-                      {'14:00'}
-                    </span>
-                    <span>
-                      <span style={{ display: 'block', fontSize: '15px', fontWeight: '500', color: 'var(--text)', lineHeight: '1.4' }}>
-                        {'Consultation hours'}
-                      </span>
-                      <span style={{ display: 'block', fontSize: '13px', color: 'var(--text3)' }}>{'By appointment · Faculty Room 5'}</span>
-                    </span>
-                  </div>
+                    </div>
+                  ))}
                 </div>
                 <DcLink
                   href="CourseMap.dc.html"
@@ -1029,15 +925,15 @@ function template(v) {
                   {'Open the course outline →'}
                 </div>
               </DcLink>
-              <DcLink href="Lesson.dc.html" className="glass lift" style={{ display: 'block', padding: '20px', color: 'inherit' }}>
+              <DcLink href={v.wk.lessonHref} className="glass lift" style={{ display: 'block', padding: '20px', color: 'inherit' }}>
                 <div className="mono" style={{ fontSize: '13px', fontWeight: '500', color: 'var(--text3)', marginBottom: '8px' }}>
                   {'Lesson workspace'}
                 </div>
                 <div style={{ fontSize: '18.5px', fontWeight: '600', color: 'var(--text)', marginBottom: '6px' }}>
-                  {'Week 7 lesson and laboratory'}
+                  {v.wk.lessonCard.heading}
                 </div>
                 <div style={{ fontSize: '14px', fontWeight: '500', color: 'var(--accent-strong)', marginTop: '12px' }}>
-                  {'Continue: Lesson 7.1 →'}
+                  {v.wk.lessonCard.cta}
                 </div>
               </DcLink>
               <DcLink href="PromptWorkshop.dc.html" className="glass lift" style={{ display: 'block', padding: '20px', color: 'inherit' }}>

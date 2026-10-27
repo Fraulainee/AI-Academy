@@ -165,6 +165,23 @@ The validator recomputes each analogy (a − b + c, nearest by the metric, exclu
 ```
 Or a single matrix: `"W": [[…]]`. Use for attention maps, causal masks (1 = visible, 0 = hidden), confusion matrices, similarity matrices.
 
+### `attention` (query, keys, values: the picture behind softmax(QKᵀ/√d)V)
+```json
+{ "type": "attention", "title": "…", "intro": "…", "scale": true,
+  "tokens": ["I", "am", "eating", "an", "apple"],
+  "keys":   [[1, 0], [0, 1], [1, 1], [0, 0.5], [1.5, 0.5]],
+  "values": [[0.2, 1], [0.5, 0.1], [1, 0.9], [0.1, 0.3], [0.9, 0.2]],
+  "queries": [ { "label": "apple", "q": [1, 0.5] }, { "label": "eating", "q": [0.5, 1] } ] }
+```
+Draws the diagram: the query is compared (⊙) with every key, the scores go through softmax to give weights α, and the output is Σ αᵢ vᵢ. All numbers are computed live; the student picks the query and can switch "divide by √d". Use 3 to 7 tokens and vectors of 2 to 4 numbers so the figures stay readable. `keys`, `values` have one row per token; each query `q` has the same length as a key. Say the numbers are illustrative.
+### `equation` (a formula whose parts you can select, plus a worked example)
+```json
+{ "type": "equation", "title": "…", "intro": "…",
+  "formula": [ { "t": "α", "id": "alpha" }, " = softmax(", { "t": "q·k", "id": "score" }, " / ", { "t": "√d", "id": "scale" }, ")" ],
+  "parts": [ { "id": "alpha", "name": "α (attention weight)", "meaning": "How much this word contributes to the output. All weights sum to 1." } ],
+  "steps": [ { "title": "Dot product", "expr": "q·k = 1×1 + 0.5×0 = 1", "note": "…" } ] }
+```
+Use it whenever a lesson introduces a formula: every symbol is a `{t, id}` term with a plain-language `parts` entry; plain strings are the glue. `steps` is an optional worked example (compute every number yourself, see §8).
 ### `posenc` (sinusoidal positional encoding, computed live): `{ "type": "posenc", "title": "…", "dModel": 16, "positions": 24 }`
 ### `patch` (image → patches → tokens)
 `{ "type": "patch", "title": "…", "image": [ [0,0,9,9,…], … ], "channels": 1, "patchSizes": [2,4,8] }` with a square matrix of integers 0–9 (e.g. 8×8 or 16×16).

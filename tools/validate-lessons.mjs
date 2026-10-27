@@ -165,6 +165,24 @@ function check(file) {
         tabs.forEach((t, k) => { if (!rect(t.W) || t.W.length !== (s.rows || []).length || t.W[0].length !== (s.cols || []).length) at(`matrix ${k + 1} does not match rows × cols`); else if (s.rowsSumToOne && t.W.some((r) => Math.abs(r.reduce((a, v) => a + v, 0) - 1) > 0.011)) at(`matrix ${k + 1}: rows must sum to 1 (±0.01)`); });
       },
       posenc: () => {},
+      attention: () => {
+        const n = (s.tokens || []).length;
+        if (n < 3 || s.tokens.some((t) => !isStr(t))) at('needs ≥3 tokens');
+        if (!rect(s.keys) || s.keys.length !== n) at('keys must be a numeric matrix with one row per token');
+        if (!rect(s.values) || s.values.length !== n) at('values must be a numeric matrix with one row per token');
+        const d = rect(s.keys) ? s.keys[0].length : 0;
+        if (d > 4 || (rect(s.values) && s.values[0].length > 4)) warn(`block ${i + 1}: vectors longer than 4 numbers are hard to read`);
+        if (!(s.queries || []).length || s.queries.some((x) => !isStr(x.label) || !Array.isArray(x.q) || x.q.length !== d || !x.q.every(isNum))) at('queries need label and q (same length as a key)');
+        else if (rect(s.keys) && rect(s.values) && s.keys.length === n && s.values.length === n) s.queries.forEach((x, k) => { const r = M.attend(x.q, s.keys, s.values, s.scale !== false); if (Math.abs(r.alpha.reduce((a, v) => a + v, 0) - 1) > 1e-6 || r.out.some((v) => !Number.isFinite(v))) at(`query ${k + 1} gives invalid weights`); });
+      },
+      equation: () => {
+        const parts = s.parts || [];
+        const ids = parts.map((p) => p.id);
+        if (parts.length < 2 || new Set(ids).size !== ids.length || parts.some((p) => !isStr(p.id) || !isStr(p.name) || !isStr(p.meaning, 15))) at('needs ≥2 parts with unique id, name and meaning');
+        if (!Array.isArray(s.formula) || !s.formula.length) at('formula must be an array of strings and {t, id} terms');
+        else (s.formula).forEach((f) => { if (typeof f !== 'string' && (!isStr(f.t) || !ids.includes(f.id))) at(`formula term "${f && f.t}" does not match a part id`); });
+        (s.steps || []).forEach((st, k) => { if (!isStr(st.title) || !isStr(st.expr) || !isStr(st.note, 15)) at(`step ${k + 1} needs title, expr and note`); });
+      },
       patch: () => { const im = s.image || []; if (im.length < 4 || !im.every((r) => Array.isArray(r) && r.length === im.length && r.every((v) => Number.isInteger(v) && v >= 0 && v <= 9))) at('image must be a square matrix of integers 0–9'); else if (!(s.patchSizes || [2, 4, 8]).some((p) => im.length % p === 0)) at('no patch size divides the image'); },
       diffusion: () => { const im = s.image || []; if (im.length < 6 || im.length > 16 || !im.every((r) => /^[0-9]+$/.test(r) && r.length === im.length)) at('image must be a square array of digit strings, 6–16 per side'); },
       retrieval: () => {

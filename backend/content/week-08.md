@@ -68,6 +68,41 @@ Early dimensions flip quickly from position to position, like the second hand of
 
 Without biases the layer has 4 × 512 × 512 = 1,048,576 weights. Splitting into heads costs no extra parameters: 8 heads of 64 do about the same work as one head of 512.
 
+Before looking at several heads, picture what a single head does. The query asks a question, every key answers "how well do I match?", and the values carry the information that gets mixed.
+
+```viz
+{
+  "type": "equation",
+  "title": "Scaled dot-product attention, one query",
+  "intro": "Select a symbol to see what it means, then step through a worked example for the query “apple”.",
+  "formula": [ "Attention(Q, K, V) = softmax(", { "t": "Q Kᵀ", "id": "score" }, " / ", { "t": "√d", "id": "scale" }, ") ", { "t": "V", "id": "values" } ],
+  "parts": [
+    { "id": "score", "name": "Q Kᵀ (scores).", "meaning": "The dot product of the query with every key. A larger number means the key matches the query better." },
+    { "id": "scale", "name": "√d (scaling).", "meaning": "d is the length of a key vector. Dividing by √d stops the scores growing with d, which would push softmax into extreme, nearly one-hot weights." },
+    { "id": "values", "name": "V (values).", "meaning": "The information each word offers. Softmax turns the scores into weights that sum to 1, and the output is the weighted sum of the value vectors." }
+  ],
+  "steps": [
+    { "title": "Score", "expr": "q = [1.0, 0.8]\nq·k(apple) = 1.0×1.0 + 0.8×1.1 = 1.88\nq·k(eating) = 1.0×1.2 + 0.8×0.4 = 1.52", "note": "Do this for every key. Here d = 2, and the five scores are 0.28, 0.34, 1.52, 0.18 and 1.88." },
+    { "title": "Scale", "expr": "1.88 / √2 = 1.33\n1.52 / √2 = 1.07", "note": "√2 ≈ 1.414. The scaled scores are 0.20, 0.24, 1.07, 0.13 and 1.33." },
+    { "title": "Softmax", "expr": "weight(apple) = e^1.33 / (e^0.20 + e^0.24 + e^1.07 + e^0.13 + e^1.33)\n= 3.78 / 10.34 = 0.37", "note": "The five weights are 0.12, 0.12, 0.28, 0.11 and 0.37, and they sum to 1." },
+    { "title": "Mix the values", "expr": "output = 0.12·v1 + 0.12·v2 + 0.28·v3 + 0.11·v4 + 0.37·v5\n= [0.66, 0.57]", "note": "The output is mostly the values of “apple” and “eating”, the words the query attends to." }
+  ],
+  "note": "The numbers are illustrative, authored for teaching. The next figure draws the same calculation."
+}
+```
+
+```viz
+{
+  "type": "attention",
+  "title": "Query, keys and values for “I am eating an apple”",
+  "intro": "Pick a query. Follow the dashed lines: the query is compared with each key, the scores become weights α, and the weighted values add up to the output. Try turning off the √d scaling.",
+  "tokens": ["I", "am", "eating", "an", "apple"],
+  "keys": [[0.2, 0.1], [0.1, 0.3], [1.2, 0.4], [0.1, 0.1], [1.0, 1.1]],
+  "values": [[0.1, 0.9], [0.2, 0.1], [1.0, 0.6], [0.1, 0.2], [0.9, 0.7]],
+  "queries": [ { "label": "apple", "q": [1.0, 0.8] }, { "label": "eating", "q": [0.4, 1.2] } ]
+}
+```
+
 Compare the two heads below for the sentence "The cat sat on". Each row is a query token and each row sums to 1, as softmax requires. The matrix is lower-triangular because this is a decoder: a token may not look ahead.
 
 ```viz

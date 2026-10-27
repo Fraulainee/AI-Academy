@@ -149,3 +149,16 @@ export function tfidfRank(docs, query) {
   return docs.map((d, i) => { const v = vec(toks[i]); let dot = 0; q.forEach((c, w) => { dot += c * (v.get(w) || 0); }); return { d, score: dot / (qn * norm(v)), hits: [...q.keys()].filter((w) => v.has(w)) }; }).sort((a, b) => b.score - a.score);
 }
 
+
+// Scaled dot-product attention for one query: scores q·kᵢ (÷ √d when scale), softmax weights α, output Σ αᵢ vᵢ.
+export function attend(q, K, V, scale = true) {
+  const d = q.length;
+  const raw = K.map((k) => k.reduce((s, x, j) => s + x * q[j], 0));
+  const scores = raw.map((s) => (scale ? s / Math.sqrt(d) : s));
+  const m = Math.max(...scores);
+  const e = scores.map((s) => Math.exp(s - m));
+  const z = e.reduce((a, b) => a + b, 0);
+  const alpha = e.map((x) => x / z);
+  const out = V[0].map((_, j) => V.reduce((s, v, i) => s + alpha[i] * v[j], 0));
+  return { raw, scores, alpha, out };
+}

@@ -980,6 +980,9 @@ function template(v) {
                 <DcLink className="ctabtn md-go" href={`/lesson/${v.sel?.week}`}>
                   {'Open lesson'}
                 </DcLink>
+                <DcLink className="ctabtn md-go" href={`/dashboard/${v.sel?.week}`}>
+                  {'Week overview'}
+                </DcLink>
               </div>
             </div>
             <div className="sect journey" style={{ marginBottom: 'var(--s5)' }}>

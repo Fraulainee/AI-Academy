@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { mulberry32, gaussNoise, BYTES, convParams, loraParams, chinchilla, FN, LOSS, neuronAccuracy, convolve, transposeConv, learnBPE, applyBPE, bigrams, cosine, nearest, posEnc, alphaBar, tokens, tfidfRank } from './lessonMath.js';
+import { mulberry32, gaussNoise, BYTES, convParams, loraParams, chinchilla, FN, LOSS, neuronAccuracy, convolve, transposeConv, learnBPE, applyBPE, bigrams, cosine, nearest, posEnc, alphaBar, tokens, tfidfRank, attend } from './lessonMath.js';
 export { convolve, gaussNoise };
 
 // Data-driven figures for lessons. Each takes the JSON from a ```viz block in a week-NN.md file and does a
@@ -663,4 +663,126 @@ function Retrieval({ spec, fig }) {
   );
 }
 
-export const VIZ = { pipeline: Pipeline, calc: Calc, curve: Curve, descent: Descent, neuron: Neuron, conv: Conv, bpe: BPE, ngram: NGram, scatter: Scatter, heatmap: Heatmap, posenc: PosEnc, patch: Patch, diffusion: Diffusion, retrieval: Retrieval };
+
+// ---------------------------------------------------------------- attention (query, keys, values -> output)
+// One vector drawn as a stack of shaded cells with the numbers inside.
+function VecCells({ x, y, vals, color, w = 40, h = 17 }) {
+  return (
+    <g>
+      {vals.map((v, i) => (
+        <g key={i}>
+          <rect x={x} y={y + i * h} width={w} height={h} fill={color} fillOpacity={0.28 + 0.62 * clamp(Math.abs(v) / 2, 0, 1)} stroke={color} strokeWidth="1" rx="3" />
+          <text x={x + w / 2} y={y + i * h + h / 2 + 3.5} textAnchor="middle" className="vz-vn">{f2(v, 1)}</text>
+        </g>
+      ))}
+    </g>
+  );
+}
+
+function Attention({ spec, fig }) {
+  const [qi, setQi] = useState(0);
+  const [scale, setScale] = useState(spec.scale !== false);
+  const [hi, setHi] = useState(null);
+  const n = spec.tokens.length;
+  const q = spec.queries[qi];
+  const { raw, scores, alpha, out } = useMemo(() => attend(q.q, spec.keys, spec.values, scale), [spec, qi, scale]);
+  const d = q.q.length;
+  const dv = spec.values[0].length;
+  const colW = 118;
+  const W = n * colW + 150;
+  const cx = (i) => 50 + i * colW + colW / 2 - 20;
+  const qh = d * 17, kh = d * 17, vh = dv * 17;
+  const qY = 8, kY = 112, vY = kY + kh + 44, tokY = vY + vh + 14;
+  const H = tokY + 38;
+  const qx = (n * colW) / 2 + 30 - 20;
+  const outX = n * colW + 62;
+  const best = alpha.indexOf(Math.max(...alpha));
+  return (
+    <div className="wg">
+      <Title fig={fig}>{spec.title}</Title>
+      {spec.intro ? <p className="wg-p">{spec.intro}</p> : null}
+      <div className="wg-row" role="group" aria-label="Choose the query" style={{ marginBottom: 10 }}>
+        {spec.queries.map((x, i) => <button key={x.label} type="button" className={'wg-chip' + (i === qi ? ' on' : '')} onClick={() => setQi(i)}>{x.label}</button>)}
+        <label className="vz-check"><input type="checkbox" checked={scale} onChange={(e) => setScale(e.target.checked)} /> divide by √d</label>
+      </div>
+      <div className="vz-hm-wrap">
+        <svg viewBox={`0 0 ${W} ${H}`} className="vz-att" role="img" aria-label={`Attention for the query “${q.label}”: the query is compared with each key, the scores become weights that sum to 1, and the output is the weighted sum of the values. The largest weight, ${f2(alpha[best], 2)}, is on “${spec.tokens[best]}”.`}>
+          <text x="6" y={qY + qh / 2 + 4} className="vz-rl">Query</text>
+          <text x="6" y={kY + kh / 2 + 4} className="vz-rl">Keys</text>
+          <text x="6" y={vY + vh / 2 + 4} className="vz-rl">Values</text>
+          <VecCells x={qx} y={qY} vals={q.q} color="var(--accent)" />
+          {spec.tokens.map((t, i) => {
+            const a = alpha[i];
+            const dotY = kY + kh / 2;
+            const x = cx(i);
+            return (
+              <g key={i} onMouseEnter={() => setHi(i)} onMouseLeave={() => setHi(null)} opacity={hi === null || hi === i ? 1 : 0.45}>
+                <path d={`M ${qx + 20} ${qY + qh} C ${qx + 20} ${qY + qh + 60}, ${x + 62} ${dotY - 62}, ${x + 62} ${dotY - 11}`} fill="none" stroke="var(--text2)" strokeWidth={1 + 4 * a} strokeOpacity={0.3 + 0.7 * a} strokeDasharray="5 4" />
+                <VecCells x={x} y={kY} vals={spec.keys[i]} color="var(--amber)" />
+                <circle cx={x + 62} cy={dotY} r="10" fill="var(--surface2)" stroke="var(--text2)" />
+                <circle cx={x + 62} cy={dotY} r="1.8" fill="var(--text)" />
+                <text x={x + 62} y={dotY + 25} textAnchor="middle" className="vz-sc">{f2(scores[i], 2)}</text>
+                <path d={`M ${x + 62} ${dotY + 33} L ${x + 62} ${vY + 6}`} stroke="var(--text2)" strokeWidth="1.5" strokeDasharray="4 3" fill="none" markerEnd="url(#vz-arr)" />
+                <VecCells x={x} y={vY} vals={spec.values[i]} color="var(--indigo)" />
+                <text x={x + 45} y={vY + vh / 2 + 4} className="vz-al">·α{i + 1}={f2(a, 2)}</text>
+                {i < n - 1 ? <text x={x + colW - 14} y={vY + vh / 2 + 4} className="vz-al">+</text> : null}
+                <rect x={x - 12} y={tokY} width={colW - 6} height="28" rx="6" fill={i === best ? 'var(--accent-soft-bg)' : 'var(--surface2)'} stroke={i === best ? 'var(--accent)' : 'var(--surface2-border)'} />
+                <text x={x - 12 + (colW - 6) / 2} y={tokY + 18} textAnchor="middle" className="vz-tk">{t}</text>
+              </g>
+            );
+          })}
+          <defs><marker id="vz-arr" viewBox="0 0 8 8" refX="6" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="var(--text2)" /></marker></defs>
+          <text x={outX - 18} y={vY + vh / 2 + 5} className="vz-eq">=</text>
+          <VecCells x={outX} y={vY + (vh - dv * 17) / 2} vals={out} color="var(--text3)" />
+          <text x={outX + 20} y={vY + vh / 2 + dv * 8.5 + 20} textAnchor="middle" className="vz-rl">Output</text>
+        </svg>
+      </div>
+      <div className="vz-hm-wrap">
+        <table className="vz-att-t" aria-label="Scores and attention weights">
+          <thead><tr><th scope="row">Token</th>{spec.tokens.map((t) => <th key={t} scope="col">{t}</th>)}</tr></thead>
+          <tbody>
+            <tr><th scope="row">score q·k</th>{raw.map((x, i) => <td key={i}>{f2(x, 2)}</td>)}</tr>
+            {scale ? <tr><th scope="row">÷ √{d}</th>{scores.map((x, i) => <td key={i}>{f2(x, 2)}</td>)}</tr> : null}
+            <tr><th scope="row">weight α</th>{alpha.map((x, i) => <td key={i} className={i === best ? 'hi' : ''}>{f2(x, 2)}</td>)}</tr>
+          </tbody>
+        </table>
+      </div>
+      <p className="wg-p" aria-live="polite" style={{ margin: '10px 0 0' }}>
+        The weights sum to <strong>{f2(alpha.reduce((a, b) => a + b, 0), 2)}</strong>. “{q.label}” attends most to <strong>{spec.tokens[best]}</strong> ({f2(alpha[best] * 100, 0)}%). Output = {alpha.map((a, i) => `${f2(a, 2)}·v${i + 1}`).join(' + ')} = <strong>[{out.map((x) => f2(x, 2)).join(', ')}]</strong>.
+      </p>
+      <p className="wg-note">{spec.note || 'Illustrative numbers authored for teaching, not taken from a trained model. Hover a column to focus it.'}</p>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------- equation (formula with named parts, plus a worked example)
+function Equation({ spec, fig }) {
+  const [part, setPart] = useState(spec.parts[0].id);
+  const [step, setStep] = useState(0);
+  const steps = spec.steps || [];
+  const sel = spec.parts.find((p) => p.id === part) || spec.parts[0];
+  return (
+    <div className="wg">
+      <Title fig={fig}>{spec.title}</Title>
+      {spec.intro ? <p className="wg-p">{spec.intro}</p> : null}
+      <div className="vz-formula" role="math" aria-label={spec.aria || spec.formula.map((f) => (typeof f === 'string' ? f : f.t)).join('')}>
+        {spec.formula.map((f, i) => {
+          if (typeof f === 'string') return <span key={i}>{f}</span>;
+          return <button key={i} type="button" className={'vz-term' + (f.id === part ? ' on' : '')} onClick={() => setPart(f.id)} aria-pressed={f.id === part}>{f.t}</button>;
+        })}
+      </div>
+      <div className="vz-part" aria-live="polite"><strong>{sel.name}</strong> {sel.meaning}</div>
+      {steps.length ? (
+        <div className="vz-steps">
+          <div className="wg-row" style={{ marginBottom: 8 }}>
+            {steps.map((s, i) => <button key={i} type="button" className={'wg-chip' + (i === step ? ' on' : '')} onClick={() => setStep(i)}>{i + 1}. {s.title}</button>)}
+          </div>
+          <div className="vz-step-b"><code>{steps[step].expr}</code><p className="wg-p" style={{ margin: '6px 0 0' }}>{steps[step].note}</p></div>
+        </div>
+      ) : null}
+      {spec.note ? <p className="wg-note">{spec.note}</p> : null}
+    </div>
+  );
+}
+
+export const VIZ = { attention: Attention, equation: Equation, pipeline: Pipeline, calc: Calc, curve: Curve, descent: Descent, neuron: Neuron, conv: Conv, bpe: BPE, ngram: NGram, scatter: Scatter, heatmap: Heatmap, posenc: PosEnc, patch: Patch, diffusion: Diffusion, retrieval: Retrieval };

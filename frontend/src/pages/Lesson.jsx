@@ -10,6 +10,7 @@ import pageCss from './Lesson.css?inline';
 import planCss from '../dc/lessonPlan.css?inline';
 import { prepare, PlanView, PlanStatus } from '../dc/lessonPlan.jsx';
 import * as session from '../dc/session.js';
+import { TOTAL_WEEKS, getWeek } from '../data/courseWeeks.js';
 
 const THEME_KEY = 'supervaise-theme';
 const THEME_EVENT = 'supervaise-theme-change';
@@ -396,7 +397,14 @@ class Component extends DCLogic {
     return <PlanStatus week={Number(week)} status={status} />;
   }
   renderVals() {
-    return { ...this.renderVals0(), ...this.hkVals(), planNode: this.planNode() };
+    const wk = getWeek(this.props.week);
+    return {
+      ...this.renderVals0(),
+      ...this.hkVals(),
+      planNode: this.planNode(),
+      ctxWeek: 'Week ' + wk.week + ' of ' + TOTAL_WEEKS,
+      ctxTerm: wk.termLabel,
+    };
   }
   renderVals0() {
     const dark = this.state.theme === 'dark';
@@ -883,8 +891,8 @@ function template(v) {
               <div className="hk-scrim" style={css(`display:${v.hkScrim}`)} onClick={v.hkClose}></div>
               <div className="ctx">
                 <span>{'A.Y. 2026/2027'}</span> <span className="ctx-s" aria-hidden="true"></span> <span>{'Second Semester'}</span>{' '}
-                <span className="ctx-s" aria-hidden="true"></span> <span className="ctx-now">{'Week 7 of 20'}</span>{' '}
-                <span className="ctx-s" aria-hidden="true"></span> <span>{'Midterm Term'}</span>
+                <span className="ctx-s" aria-hidden="true"></span> <span className="ctx-now">{v.ctxWeek}</span>{' '}
+                <span className="ctx-s" aria-hidden="true"></span> <span>{v.ctxTerm}</span>
               </div>
               <div className={v.hkClsS}>
                 <button

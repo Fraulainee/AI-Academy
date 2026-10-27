@@ -94,6 +94,7 @@ export default function App() {
         <Route path="/" element={<LazyPage name="LandingFull" />} />
         <Route path="/intro" element={<LazyPage name="Landing" />} />
         <Route path="/dashboard" element={guard(<LazyPage name="Main" />)} />
+        <Route path="/dashboard/:week" element={guard(<LazyPage name="Main" />)} />
         <Route path="/course-map" element={guard(<LazyPage name="CourseMap" />)} />
         <Route path="/lesson" element={guard(<LazyPage name="Lesson" />)} />
         <Route path="/lesson/:week" element={guard(<LazyPage name="Lesson" />)} />
