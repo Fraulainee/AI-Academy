@@ -17,6 +17,7 @@ Add new entries under **Unreleased** as you work, then rename that heading to a 
 - **Exercise callouts.** A paragraph that starts with `*Exercise N:*` in a lesson file becomes an amber callout with an "Exercise N" badge, so it stands out when skimming.
 
 ### Changed
+- **Lesson text width matches Week 7.** In the Markdown lessons the reading column is now 60rem (the page width on narrower screens), the same as the built-in Week 7 lesson, so text runs about as wide as the figures. It was 41rem, which left text noticeably narrower than the figures. Lab steps and exercise callouts follow the same width.
 - **Larger type in the Markdown lessons (Weeks 1–6, 8–20).** Body text 17 → 18.5 px, lab steps and lists 16 → 17.5 px, captions and detail text 15 → 16.5 px, subheadings 18.5 → 20.5 px, code 12.5 → 14 px, and 1–2 px more on the interactive figures, tables and quiz. The text column is a little wider (37 → 41 rem). The built-in Week 7 lesson keeps its original sizes.
 - Overview page (`Main.jsx`) no longer hardcodes Week 7: header, hero, activities, sessions, schedule pop-up and lesson card all read from the week data.
 - Lesson page header shows "Week N of 20" and the term for `/lesson/N`.

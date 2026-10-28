@@ -270,7 +270,9 @@
 
   /* ---- easier to read: a slightly larger type scale for lesson plans ---- */
   .lp-root{--fs-body:18.5px;--fs-body-ui:17.5px;--fs-detail:16.5px;--fs-sec-lede:20px;--fs-h3:20.5px;--fs-lede:clamp(20px,1.7vw,23px);--fs-h2:clamp(26px,2.2vw,31px);--lh-body:1.7}
-  .lp-root{--measure:41rem}
+  /* same reading width as the built-in Week 7 lesson: text runs as wide as the figures (60rem, or the page if narrower) */
+  .lp-root{--measure:60rem}
+  .lw .wp-prose :is(.lsteps,.exercise){max-width:var(--measure)}
   .lp-root .rail a{font-size:14px}
   .lp-root .hk-lab,.lp-root .hook-k{font-size:14px}
   .lp-root .hook-cap{font-size:var(--fs-detail)}
